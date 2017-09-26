@@ -2,16 +2,16 @@ package com.ycb.zprovider.controller;
 
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
-import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.request.ZhimaMerchantBorrowEntityUploadRequest;
 import com.alipay.api.response.ZhimaMerchantBorrowEntityUploadResponse;
 import com.ycb.zprovider.constant.GlobalConfig;
 import com.ycb.zprovider.mapper.ShopStationMapper;
+import com.ycb.zprovider.utils.JsonUtils;
+import com.ycb.zprovider.vo.AlipayClientFactory;
 import com.ycb.zprovider.vo.ShopStation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Created by Huo on 2017/9/11.
@@ -29,33 +31,17 @@ import java.util.Date;
 @RequestMapping("creditupload")
 public class CreditUploadController {
     public static final Logger logger = LoggerFactory.getLogger(CreditUploadController.class);
-    //初始化alipayClient用到的参数:支付宝网关
-    //初始化alipayClient用到的参数:该appId必须设为开发者自己的生活号id
-    @Value("${APPID}")
-    private String appId;
-    //初始化alipayClient用到的参数:该私钥为测试账号私钥  开发者必须设置自己的私钥,否则会存在安全隐患
-    @Value("${PRIVATE_KEY}")
-    private String privateKey;
-    //初始化alipayClient用到的参数:仅支持JSON
-    @Value("${FORMAT}")
-    private String format;
-    //初始化alipayClient用到的参数:字符编码-传递给支付宝的数据编码
-    @Value("${CHARSET}")
-    private String charset;
-    //初始化alipayClient用到的参数:该公钥为测试账号公钥,开发者必须设置自己的公钥 ,否则会存在安全隐患
-    @Value("${ALIPAY_PUBLIC_KEY}")
-    private String alipayPublicKey;
-    //初始化alipayClient用到的参数:签名类型
-    @Value("${SIGN_TYPE}")
-    private String signType;
 
     @Autowired
     private ShopStationMapper shopStationMapper;
 
+    @Autowired
+    private AlipayClientFactory alipayClientFactory;
+
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     @ResponseBody
     public String upload() {
-        AlipayClient alipayClient = new DefaultAlipayClient(GlobalConfig.Z_CREDIT_SERVER_URL, appId, privateKey, format, charset, alipayPublicKey, signType);
+        AlipayClient alipayClient = alipayClientFactory.newInstance();
         ZhimaMerchantBorrowEntityUploadRequest request = new ZhimaMerchantBorrowEntityUploadRequest();
 
         ShopStation shopStation = shopStationMapper.findShopStationById(1L);
@@ -101,23 +87,21 @@ public class CreditUploadController {
         //实体上传时间，某一借还实体信息多次上传，以最新上传时间数据为当前最新快照，格式：yyyy-mm-dd hh:MM:ss	2017-01-01 15:34:38
         String uploadTime = new SimpleDateFormat("YYYY-MM-dd HH:MM:ss").format(new Date());
 
-        request.setBizContent("{" +
-                "\"product_code\":\"" + productCode + "\"," +
-                "\"category_code\":\"" + categoryCode + "\"," +
-                "\"entity_code\":\"" + entityCode + "\"," +
-                "\"longitude\":\"" + longitude + "\"," +
-                "\"latitude\":\"" + latitude + "\"," +
-                "\"entity_name\":\"" + entityName + "\"," +
-                "\"address_desc\":\"" + addressDesc + "\"," +
-                "\"office_hours_desc\":\"" + officeHoursDesc + "\"," +
-                "\"contact_number\":\"" + contactNumber + "\"," +
-                "\"collect_rent\":\"" + collectRent + "\"," +
-                "\"rent_desc\":\"" + rentDesc + "\"," +
-                "\"can_borrow\":\"" + canBorrow + "\"," +
-                "\"can_borrow_cnt\":\"" + canBorrowCnt + "\"," +
-                "\"total_borrow_cnt\":\"" + totalBorrowCnt + "\"," +
-                "\"upload_time\":\"" + uploadTime + "\"" +
-                "  }");
+        Map<String,Object> bizContentMap = new LinkedHashMap<>();
+        bizContentMap.put("product_code",productCode);
+        bizContentMap.put("category_code",categoryCode);
+        bizContentMap.put("entity_code",entityCode);
+        bizContentMap.put("address_desc",addressDesc);
+        bizContentMap.put("office_hours_desc",officeHoursDesc);
+        bizContentMap.put("contact_number",contactNumber);
+        bizContentMap.put("collect_rent",collectRent);
+        bizContentMap.put("rent_desc",rentDesc);
+        bizContentMap.put("can_borrow",canBorrow);
+        bizContentMap.put("can_borrow_cnt",canBorrowCnt);
+        bizContentMap.put("total_borrow_cnt",totalBorrowCnt);
+        bizContentMap.put("upload_time",uploadTime);
+
+        request.setBizContent(JsonUtils.writeValueAsString(bizContentMap));
         ZhimaMerchantBorrowEntityUploadResponse response = null;
         try {
             response = alipayClient.execute(request);

@@ -24,10 +24,10 @@ import java.util.Map;
  * 查询设备信息
  */
 @RestController
-@RequestMapping("borrow")
-public class CreditMachineInfo {
+@RequestMapping("/creditmachineinfo")
+public class CreditMachineInfoController {
 
-    public static final Logger logger = LoggerFactory.getLogger(CreditMachineInfo.class);
+    public static final Logger logger = LoggerFactory.getLogger(CreditMachineInfoController.class);
 
     @Autowired
     private RedisService redisService;

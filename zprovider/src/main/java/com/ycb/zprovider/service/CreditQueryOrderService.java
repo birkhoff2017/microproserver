@@ -1,16 +1,16 @@
-package com.ycb.zprovider.controller;
+package com.ycb.zprovider.service;
 
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
-import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.request.ZhimaMerchantOrderRentQueryRequest;
 import com.alipay.api.response.ZhimaMerchantOrderRentQueryResponse;
 import com.ycb.zprovider.constant.GlobalConfig;
 import com.ycb.zprovider.utils.JsonUtils;
+import com.ycb.zprovider.vo.AlipayClientFactory;
 import com.ycb.zprovider.vo.CreditOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedHashMap;
@@ -21,35 +21,19 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("queryOrder")
-public class CreditQueryOrderController {
+public class CreditQueryOrderService {
 
-    public static final Logger logger = LoggerFactory.getLogger(CreditQueryOrderController.class);
-    //初始化alipayClient用到的参数:支付宝网关
-    //初始化alipayClient用到的参数:该appId必须设为开发者自己的生活号id
-    @Value("${appId}")
-    private String appId;
-    //初始化alipayClient用到的参数:该私钥为测试账号私钥  开发者必须设置自己的私钥,否则会存在安全隐患
-    @Value("${privateKey}")
-    private String privateKey;
-    //初始化alipayClient用到的参数:仅支持JSON
-    @Value("${format}")
-    private String format;
-    //初始化alipayClient用到的参数:字符编码-传递给支付宝的数据编码
-    @Value("${charset}")
-    private String charset;
-    //初始化alipayClient用到的参数:该公钥为测试账号公钥,开发者必须设置自己的公钥 ,否则会存在安全隐患
-    @Value("${alipayPublicKey}")
-    private String alipayPublicKey;
-    //初始化alipayClient用到的参数:签名类型
-    @Value("${signType}")
-    private String signType;
+    public static final Logger logger = LoggerFactory.getLogger(CreditQueryOrderService.class);
+
+    @Autowired
+    private AlipayClientFactory alipayClientFactory;
 
     @RequestMapping(value = "/queryOrder", method = RequestMethod.POST)
     @ResponseBody
     //outOrderNo 外部订单号，需要唯一，由商户传入，芝麻内部会做幂等控制，格式为：yyyyMMddHHmmss+随机数	2016100100000xxxx
     public CreditOrder queryOrderByOutOrderNo(@RequestParam("outOrderNo") String outOrderNo) {
         CreditOrder creditOrder = new CreditOrder();
-        AlipayClient alipayClient = new DefaultAlipayClient(GlobalConfig.Z_CREDIT_SERVER_URL, appId, privateKey, format, charset, alipayPublicKey, signType);
+        AlipayClient alipayClient = alipayClientFactory.newInstance();
         ZhimaMerchantOrderRentQueryRequest request = new ZhimaMerchantOrderRentQueryRequest();
         //信用借还的产品码:w1010100000000002858
         String productCode = GlobalConfig.Z_PRODUCT_CODE;

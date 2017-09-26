@@ -2,48 +2,31 @@ package com.ycb.zprovider.controller;
 
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
-import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.request.ZhimaMerchantOrderRentModifyRequest;
 import com.alipay.api.response.ZhimaMerchantOrderRentModifyResponse;
 import com.ycb.zprovider.constant.GlobalConfig;
+import com.ycb.zprovider.vo.AlipayClientFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
  * Created by Huo on 2017/9/11.
  */
 @RestController
-@RequestMapping("modifyOrder")
+@RequestMapping("/creditmodify")
 public class CreditModifyOrderController {
 
     public static final Logger logger = LoggerFactory.getLogger(CreditModifyOrderController.class);
-    //初始化alipayClient用到的参数:支付宝网关
-    //初始化alipayClient用到的参数:该appId必须设为开发者自己的生活号id
-    @Value("${APPID}")
-    private String appId;
-    //初始化alipayClient用到的参数:该私钥为测试账号私钥  开发者必须设置自己的私钥,否则会存在安全隐患
-    @Value("${PRIVATE_KEY}")
-    private String privateKey;
-    //初始化alipayClient用到的参数:仅支持JSON
-    @Value("${FORMAT}")
-    private String format;
-    //初始化alipayClient用到的参数:字符编码-传递给支付宝的数据编码
-    @Value("${CHARSET}")
-    private String charset;
-    //初始化alipayClient用到的参数:该公钥为测试账号公钥,开发者必须设置自己的公钥 ,否则会存在安全隐患
-    @Value("${ALIPAY_PUBLIC_KEY}")
-    private String alipayPublicKey;
-    //初始化alipayClient用到的参数:签名类型
-    @Value("${SIGN_TYPE}")
-    private String signType;
+    @Autowired
+    private AlipayClientFactory alipayClientFactory;
 
-    @RequestMapping(value = "/cancelOrder", method = RequestMethod.POST)
+    @RequestMapping(value = "/modify", method = RequestMethod.POST)
     @ResponseBody
     //orderNo 信用借还订单号,该订单号在订单创建时由信用借还产品产生,并通过订单创建接口的返回结果返回给调用者
     public String query(@RequestParam("orderNo") String orderNo) {
-        AlipayClient alipayClient = new DefaultAlipayClient(GlobalConfig.Z_CREDIT_SERVER_URL, appId, privateKey, format, charset, alipayPublicKey, signType);
+        AlipayClient alipayClient = alipayClientFactory.newInstance();
         ZhimaMerchantOrderRentModifyRequest request = new ZhimaMerchantOrderRentModifyRequest();
         //信用借还的产品码,是固定值:w1010100000000002858
         String productCode = GlobalConfig.Z_PRODUCT_CODE;

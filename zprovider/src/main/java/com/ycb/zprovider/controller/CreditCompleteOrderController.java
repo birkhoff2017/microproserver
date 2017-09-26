@@ -2,7 +2,6 @@ package com.ycb.zprovider.controller;
 
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
-import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.request.ZhimaMerchantOrderRentCompleteRequest;
 import com.alipay.api.response.ZhimaMerchantOrderRentCompleteResponse;
 import com.ycb.zprovider.constant.GlobalConfig;
@@ -10,6 +9,7 @@ import com.ycb.zprovider.mapper.OrderMapper;
 import com.ycb.zprovider.mapper.ShopMapper;
 import com.ycb.zprovider.service.FeeStrategyService;
 import com.ycb.zprovider.utils.JsonUtils;
+import com.ycb.zprovider.vo.AlipayClientFactory;
 import com.ycb.zprovider.vo.Order;
 import com.ycb.zprovider.vo.Shop;
 import org.slf4j.Logger;
@@ -30,9 +30,12 @@ import java.util.Map;
  */
 
 @RestController
-@RequestMapping("restoreBattery")
+@RequestMapping("/creditcomplete")
 public class CreditCompleteOrderController {
     public static final Logger logger = LoggerFactory.getLogger(CreditCompleteOrderController.class);
+
+    @Autowired
+    private AlipayClientFactory alipayClientFactory;
 
     //初始化alipayClient用到的参数:该appId必须设为开发者自己的生活号id
     @Value("${APPID}")
@@ -66,8 +69,7 @@ public class CreditCompleteOrderController {
     @ResponseBody
     //orderid   订单编号，是在创建信用借还订单的时候商家创建的订单编号
     public void CompleteOrder(@RequestParam("orderid") String orderid) {
-        AlipayClient alipayClient = new DefaultAlipayClient(GlobalConfig.Z_CREDIT_SERVER_URL, appId, privateKey,
-                format, charset, alipayPublicKey, signType);
+        AlipayClient alipayClient = alipayClientFactory.newInstance();
         ZhimaMerchantOrderRentCompleteRequest request = new ZhimaMerchantOrderRentCompleteRequest();
         //根据orderID获得信用借还订单的支付宝的编号
         Order order = orderMapper.findOrderByOrderId(orderid);
@@ -95,7 +97,7 @@ public class CreditCompleteOrderController {
         bizContentMap.put("product_code", productCode);
         bizContentMap.put("restore_time", restoreTime);
         bizContentMap.put("pay_amount_type", payAmountType);
-//        bizContentMap.put("pay_amount", payAmount);
+        bizContentMap.put("pay_amount", payAmount);
         bizContentMap.put("pay_amount", 0);
         bizContentMap.put("restore_shop_name", "朝阳区");
 
