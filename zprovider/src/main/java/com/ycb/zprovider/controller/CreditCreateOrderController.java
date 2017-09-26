@@ -11,9 +11,13 @@ import com.alipay.api.response.ZhimaMerchantOrderRentQueryResponse;
 import com.ycb.zprovider.constant.GlobalConfig;
 import com.ycb.zprovider.mapper.OrderMapper;
 import com.ycb.zprovider.mapper.ShopMapper;
+import com.ycb.zprovider.mapper.ShopStationMapper;
 import com.ycb.zprovider.mapper.StationMapper;
+import com.ycb.zprovider.service.AlipayOrderService;
+import com.ycb.zprovider.service.FeeStrategyService;
 import com.ycb.zprovider.service.SocketService;
 import com.ycb.zprovider.utils.JsonUtils;
+import com.ycb.zprovider.vo.FeeStrategy;
 import com.ycb.zprovider.vo.Order;
 import com.ycb.zprovider.vo.Shop;
 import org.slf4j.Logger;
@@ -35,26 +39,27 @@ import java.util.*;
  * 创建信用借还订单
  */
 @RestController
-@RequestMapping("creditOrder")
+@RequestMapping("fuwuchuang_demo")
 public class CreditCreateOrderController {
     public static final Logger logger = LoggerFactory.getLogger(CreditCreateOrderController.class);
+
     //初始化alipayClient用到的参数:该appId必须设为开发者自己的生活号id
-    @Value("${APPID}")
+    @Value("${appId}")
     private String appId;
     //初始化alipayClient用到的参数:该私钥为测试账号私钥  开发者必须设置自己的私钥,否则会存在安全隐患
-    @Value("${PRIVATE_KEY}")
+    @Value("${privateKey}")
     private String privateKey;
     //初始化alipayClient用到的参数:仅支持JSON
-    @Value("${FORMAT}")
+    @Value("${format}")
     private String format;
     //初始化alipayClient用到的参数:字符编码-传递给支付宝的数据编码
-    @Value("${CHARSET}")
+    @Value("${charset}")
     private String charset;
     //初始化alipayClient用到的参数:该公钥为测试账号公钥,开发者必须设置自己的公钥 ,否则会存在安全隐患
-    @Value("${ALIPAY_PUBLIC_KEY}")
+    @Value("${alipayPublicKey}")
     private String alipayPublicKey;
     //初始化alipayClient用到的参数:签名类型
-    @Value("${SIGN_TYPE}")
+    @Value("${signType}")
     private String signType;
     //#最长可借用时间，超时后视为逾期订单，单位：天
     @Value("${MAX_CAN_BORROW_TIME}")

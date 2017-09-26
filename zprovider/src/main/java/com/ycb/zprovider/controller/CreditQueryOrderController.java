@@ -26,22 +26,22 @@ public class CreditQueryOrderController {
     public static final Logger logger = LoggerFactory.getLogger(CreditQueryOrderController.class);
     //初始化alipayClient用到的参数:支付宝网关
     //初始化alipayClient用到的参数:该appId必须设为开发者自己的生活号id
-    @Value("${APPID}")
-    private static String appId;
+    @Value("${appId}")
+    private String appId;
     //初始化alipayClient用到的参数:该私钥为测试账号私钥  开发者必须设置自己的私钥,否则会存在安全隐患
-    @Value("${PRIVATE_KEY}")
-    private static String privateKey;
+    @Value("${privateKey}")
+    private String privateKey;
     //初始化alipayClient用到的参数:仅支持JSON
-    @Value("${FORMAT}")
-    private static String format;
+    @Value("${format}")
+    private String format;
     //初始化alipayClient用到的参数:字符编码-传递给支付宝的数据编码
-    @Value("${CHARSET}")
-    private static String charset;
+    @Value("${charset}")
+    private String charset;
     //初始化alipayClient用到的参数:该公钥为测试账号公钥,开发者必须设置自己的公钥 ,否则会存在安全隐患
-    @Value("${ALIPAY_PUBLIC_KEY}")
-    private static String alipayPublicKey;
+    @Value("${alipayPublicKey}")
+    private String alipayPublicKey;
     //初始化alipayClient用到的参数:签名类型
-    @Value("${SIGN_TYPE}")
+    @Value("${signType}")
     private String signType;
 
     @RequestMapping(value = "/queryOrder", method = RequestMethod.POST)
