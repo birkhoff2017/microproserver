@@ -11,13 +11,9 @@ import com.alipay.api.response.ZhimaMerchantOrderRentQueryResponse;
 import com.ycb.zprovider.constant.GlobalConfig;
 import com.ycb.zprovider.mapper.OrderMapper;
 import com.ycb.zprovider.mapper.ShopMapper;
-import com.ycb.zprovider.mapper.ShopStationMapper;
 import com.ycb.zprovider.mapper.StationMapper;
-import com.ycb.zprovider.service.AlipayOrderService;
-import com.ycb.zprovider.service.FeeStrategyService;
 import com.ycb.zprovider.service.SocketService;
 import com.ycb.zprovider.utils.JsonUtils;
-import com.ycb.zprovider.vo.FeeStrategy;
 import com.ycb.zprovider.vo.Order;
 import com.ycb.zprovider.vo.Shop;
 import org.slf4j.Logger;
@@ -36,54 +32,41 @@ import java.util.*;
 
 /**
  * Created by Huo on 2017/9/8.
+ * 创建信用借还订单
  */
 @RestController
 @RequestMapping("creditOrder")
 public class CreditCreateOrderController {
-
     public static final Logger logger = LoggerFactory.getLogger(CreditCreateOrderController.class);
-
     //初始化alipayClient用到的参数:该appId必须设为开发者自己的生活号id
-    @Value("${appId}")
+    @Value("${APPID}")
     private String appId;
     //初始化alipayClient用到的参数:该私钥为测试账号私钥  开发者必须设置自己的私钥,否则会存在安全隐患
-    @Value("${privateKey}")
+    @Value("${PRIVATE_KEY}")
     private String privateKey;
     //初始化alipayClient用到的参数:仅支持JSON
-    @Value("${format}")
+    @Value("${FORMAT}")
     private String format;
     //初始化alipayClient用到的参数:字符编码-传递给支付宝的数据编码
-    @Value("${charset}")
+    @Value("${CHARSET}")
     private String charset;
     //初始化alipayClient用到的参数:该公钥为测试账号公钥,开发者必须设置自己的公钥 ,否则会存在安全隐患
-    @Value("${alipayPublicKey}")
+    @Value("${ALIPAY_PUBLIC_KEY}")
     private String alipayPublicKey;
     //初始化alipayClient用到的参数:签名类型
-    @Value("${signType}")
+    @Value("${SIGN_TYPE}")
     private String signType;
-
+    //#最长可借用时间，超时后视为逾期订单，单位：天
+    @Value("${MAX_CAN_BORROW_TIME}")
+    private Integer maxCanBorrowTime;
     @Autowired
     private ShopMapper shopMapper;
-
     @Autowired
     private OrderMapper orderMapper;
-
-    @Autowired
-    private ShopStationMapper shopStationMapper;
-
     @Autowired
     private StationMapper stationMapper;
-
-    @Autowired
-    private FeeStrategyService feeStrategyService;
-
     @Autowired
     private SocketService socketService;
-
-    @Autowired
-    private AlipayOrderService alipayOrderService;
-
-
 
     @RequestMapping(value = "/createOrder", method = RequestMethod.POST)
     @ResponseBody
@@ -99,7 +82,6 @@ public class CreditCreateOrderController {
         //商户在组装订单创建https请求时，会附带invoke_return_url参数，当用户完成借用准入及资金处理后，
         // 在借用完成页面会自动回调到商户提供的invoke_return_url地址链接，目前商户链接跳转是通过自动跳转的方式实现。
         String invokeReturnUrl = "http://www.duxinyuan.top/return_url.html";
-
         //下面的代码用来生成外部订单号，就是商户自己的订单号
         String date = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
         Random random = new Random();
@@ -107,23 +89,13 @@ public class CreditCreateOrderController {
         for (int i = 0; i < 4; i++) {
             sb.append(random.nextInt(10));
         }
-        /*
-        外部订单号，需要唯一，由商户传入，芝麻内部会做幂等控制，格式为：yyyyMMddHHmmss+随机数
-               示例："2016100100000xxxx\"
-        转换后的时间为：20170911091758
-         */
+        //外部订单号，需要唯一，由商户传入，芝麻内部会做幂等控制，格式为：yyyyMMddHHmmss+随机数  示例："2016100100000xxxx\"
         String outOrderNo = date + sb.toString();
-        /*
-        信用借还的产品码，传入固定值：w1010100000000002858
-         */
+        //信用借还的产品码，传入固定值：w1010100000000002858
         String productCode = GlobalConfig.Z_PRODUCT_CODE;
-        /*
-        物品名称,最长不能超过14个汉字
-         */
+        //物品名称,最长不能超过14个汉字
         String goodsName = "充电宝";
-        /*
-        租金信息描述 ,长度不超过14个汉字，只用于页面展示给C端用户，除此之外无其他意义。
-         */
+        //租金信息描述 ,长度不超过14个汉字，只用于页面展示给C端用户，除此之外无其他意义。
         String rentInfo = "1小时免费，1元/天";
         /*
         租金单位，租金+租金单位组合才具备实际的租金意义。
@@ -141,7 +113,7 @@ public class CreditCreateOrderController {
         注：参数传值必须>=0，传入其他值会报错参数非法
          */
         //这里还需要商议
-        FeeStrategy feeStrategy = feeStrategyService.findFeeStrategyByStation(Long.valueOf(sid));
+//        FeeStrategy feeStrategy = feeStrategyService.findFeeStrategyByStation(Long.valueOf(sid));
 //        String rentAmount = feeStrategy.getFixed().toString();
         String rentAmount = "0";
         /*
@@ -174,11 +146,11 @@ public class CreditCreateOrderController {
         String borrowTime = new SimpleDateFormat("YYYY-MM-dd HH:MM:ss").format(borrowDate);
         //下面的代码用于处理到期时间
         //获取最长时长
-        Long maxFeeTime = feeStrategy.getMaxFeeTime();
+//        Long maxFeeTime = feeStrategy.getMaxFeeTime();
         //获取最长时长的单位
-        Long maxFeeUnit = feeStrategy.getMaxFeeUnit();
+//        Long maxFeeUnit = feeStrategy.getMaxFeeUnit();
         //用开始租借的时间加上最长时长
-        long l = borrowDate.getTime() + maxFeeTime * maxFeeUnit * 1000;
+        long l = borrowDate.getTime() + maxCanBorrowTime * 24 * 60 * 60 * 1000;
         //示例：2017-04-30 12:06:31
         //     2017-09-11 13:09:23
         //到期时间，是指最晚归还时间，表示借用用户如果超过此时间还未完结订单（未归还物品或者未支付租金）将会进入逾期状态，
@@ -186,23 +158,23 @@ public class CreditCreateOrderController {
         String expiryTime = new SimpleDateFormat("YYYY-MM-dd HH:MM:ss").format(new Date(l));
 
         //创建一个未支付订单
-        alipayOrderService.createPreOrder(outOrderNo, sid, cableType, session);
+//        alipayOrderService.createPreOrder(outOrderNo, sid, cableType, session);
 
-        Map<String,Object> bizContentMap = new LinkedHashMap<>();
-        bizContentMap.put("invoke_type","WINDOWS");
-        bizContentMap.put("invoke_return_url",invokeReturnUrl);
-        bizContentMap.put("out_order_no",outOrderNo);
-        bizContentMap.put("product_code",productCode);
-        bizContentMap.put("goods_name",goodsName);
-        bizContentMap.put("rent_info",rentInfo);
-        bizContentMap.put("rent_unit",rentUnit);
-        bizContentMap.put("rent_amount",rentAmount);
-        bizContentMap.put("deposit_amount",depositAmount);
-        bizContentMap.put("deposit_state",depositState);
-        bizContentMap.put("borrow_shop_name",borrowShopName);
-        bizContentMap.put("rent_settle_type",rentSettleType);
-        bizContentMap.put("borrow_time",borrowTime);
-        bizContentMap.put("expiry_time",expiryTime);
+        Map<String, Object> bizContentMap = new LinkedHashMap<>();
+        bizContentMap.put("invoke_type", "WINDOWS");
+        bizContentMap.put("invoke_return_url", invokeReturnUrl);
+        bizContentMap.put("out_order_no", outOrderNo);
+        bizContentMap.put("product_code", productCode);
+        bizContentMap.put("goods_name", goodsName);
+        bizContentMap.put("rent_info", rentInfo);
+        bizContentMap.put("rent_unit", rentUnit);
+        bizContentMap.put("rent_amount", rentAmount);
+        bizContentMap.put("deposit_amount", depositAmount);
+        bizContentMap.put("deposit_state", depositState);
+        bizContentMap.put("borrow_shop_name", borrowShopName);
+        bizContentMap.put("rent_settle_type", rentSettleType);
+        bizContentMap.put("borrow_time", borrowTime);
+        bizContentMap.put("expiry_time", expiryTime);
 
         request.setBizContent(JsonUtils.writeValueAsString(bizContentMap));
         ZhimaMerchantOrderRentCreateResponse response = null;
@@ -218,13 +190,11 @@ public class CreditCreateOrderController {
             return url;
         } else {
             System.out.println("调用失败");
-
             logger.error("调用创建信用借还订单失败，错误代码：" + response.getCode() + "错误信息：" + response.getMsg() +
                     "错误子代码" + response.getSubCode() + "错误子信息：" + response.getSubMsg());
         }
         return null;
     }
-
 
 
     /**
@@ -306,6 +276,7 @@ public class CreditCreateOrderController {
                     ZhimaMerchantOrderRentQueryResponse zhimaResponse = null;
                     try {
                         zhimaResponse = alipayClient.execute(zhimaMerchantOrderRentQueryRequest);
+                        System.out.println(zhimaResponse.toString());
                     } catch (AlipayApiException e) {
                         e.printStackTrace();
                     }
