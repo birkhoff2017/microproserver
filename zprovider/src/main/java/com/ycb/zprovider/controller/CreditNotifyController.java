@@ -4,6 +4,7 @@ import com.alipay.api.AlipayApiException;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.ycb.zprovider.mapper.OrderMapper;
 import com.ycb.zprovider.mapper.StationMapper;
+import com.ycb.zprovider.service.CreditQueryOrderService;
 import com.ycb.zprovider.service.SocketService;
 import com.ycb.zprovider.utils.RequestUtil;
 import com.ycb.zprovider.vo.CreditOrder;
@@ -13,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -34,15 +34,6 @@ public class CreditNotifyController {
 
     public static final Logger logger = LoggerFactory.getLogger(CreditNotifyController.class);
 
-    //初始化alipayClient用到的参数:该appId必须设为开发者自己的生活号id
-    @Value("${APPID}")
-    private String appId;
-    //初始化alipayClient用到的参数:该私钥为测试账号私钥  开发者必须设置自己的私钥,否则会存在安全隐患
-    @Value("${PRIVATE_KEY}")
-    private String privateKey;
-    //初始化alipayClient用到的参数:仅支持JSON
-    @Value("${FORMAT}")
-    private String format;
     //初始化alipayClient用到的参数:字符编码-传递给支付宝的数据编码
     @Value("${CHARSET}")
     private String charset;
@@ -52,26 +43,20 @@ public class CreditNotifyController {
     //初始化alipayClient用到的参数:签名类型
     @Value("${SIGN_TYPE}")
     private String signType;
-    //#最长可借用时间，超时后视为逾期订单，单位：天
-    @Value("${MAX_CAN_BORROW_TIME}")
-    private Integer maxCanBorrowTime;
     @Autowired
     private OrderMapper orderMapper;
     @Autowired
     private StationMapper stationMapper;
     @Autowired
     private SocketService socketService;
+    @Autowired
+    private CreditQueryOrderService creditQueryOrderService;
 
     /**
      * 异步通知请求入口.
-     *
-     * @param modelMap
-     * @param request
-     * @return
-     * @throws IOException
      */
     @RequestMapping(value = "/notify", method = {RequestMethod.POST})
-    public void notify(ModelMap modelMap, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void notify(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         //获取支付宝POST过来反馈信息
 //        Map<String, String[]> requestMap = request.getParameterMap();
@@ -110,7 +95,7 @@ public class CreditNotifyController {
             //外部商户订单号 外部商户生成的订单号，与芝麻信用借还平台生成的订单号存在关联关系
             String outOrderNo = params.get("out_order_no");
             //根据外部订单号查询订单信息
-            CreditOrder creditOrder = CreditQueryOrderController.queryOrderByOutOrderNo(outOrderNo);
+            CreditOrder creditOrder = creditQueryOrderService.queryOrderByOutOrderNo(outOrderNo);
             //查询数据库中订单的信息
             Order order = orderMapper.findOrderByOrderId(outOrderNo);
             //对于订单创建事件
@@ -129,6 +114,7 @@ public class CreditNotifyController {
             printResponse(response, "error");
         }
     }
+
     //弹出电池
     private void borrowBattery(String outOrderNo, CreditOrder creditOrder, Order order) throws IOException {
         //从订单中获取设备的sid和cabletype
@@ -140,6 +126,7 @@ public class CreditNotifyController {
         String responseUserId = creditOrder.getUserId();
         socketService.SendCmd("ACT:borrow_battery;EVENT_CODE:1;STATIONID:" + sid + ";MAC:" + mac + ";ORDERID:" + outOrderNo + ";COLORID:7;CABLE:" + cableType + ";\r\n");
     }
+
     /*
     当调用支付宝完结订单接口成功时，更新订单的状态
      */
@@ -154,6 +141,7 @@ public class CreditNotifyController {
         order.setAlipayFundOrderNo(alipayFundOrderNo);
         orderMapper.updateOrderStatusByOrderNo(order);
     }
+
     /*
     当调用支付宝的创建信用借还订单接口成功时，更新订单的状态
      */
@@ -164,6 +152,7 @@ public class CreditNotifyController {
         order.setOrderNo(outOrderNo);
         orderMapper.updateOrderStatusByOrderId(order);
     }
+
     //返回 success
     private void printResponse(HttpServletResponse response, String content) throws IOException {
         PrintWriter writer = null;

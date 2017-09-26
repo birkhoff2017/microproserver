@@ -2,7 +2,6 @@ package com.ycb.zprovider.controller;
 
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
-import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.request.ZhimaMerchantOrderRentCompleteRequest;
 import com.alipay.api.response.ZhimaMerchantOrderRentCompleteResponse;
 import com.ycb.zprovider.constant.GlobalConfig;
@@ -10,6 +9,7 @@ import com.ycb.zprovider.mapper.OrderMapper;
 import com.ycb.zprovider.mapper.ShopMapper;
 import com.ycb.zprovider.service.FeeStrategyService;
 import com.ycb.zprovider.utils.JsonUtils;
+import com.ycb.zprovider.vo.AlipayClientFactory;
 import com.ycb.zprovider.vo.Order;
 import com.ycb.zprovider.vo.Shop;
 import org.slf4j.Logger;
@@ -34,24 +34,8 @@ public class CreditOverdueOrders {
 
     public static final Logger logger = LoggerFactory.getLogger(CreditOverdueOrders.class);
 
-    //初始化alipayClient用到的参数:该appId必须设为开发者自己的生活号id
-    @Value("${APPID}")
-    private String appId;
-    //初始化alipayClient用到的参数:该私钥为测试账号私钥  开发者必须设置自己的私钥,否则会存在安全隐患
-    @Value("${PRIVATE_KEY}")
-    private String privateKey;
-    //初始化alipayClient用到的参数:仅支持JSON
-    @Value("${FORMAT}")
-    private String format;
-    //初始化alipayClient用到的参数:字符编码-传递给支付宝的数据编码
-    @Value("${CHARSET}")
-    private String charset;
-    //初始化alipayClient用到的参数:该公钥为测试账号公钥,开发者必须设置自己的公钥 ,否则会存在安全隐患
-    @Value("${ALIPAY_PUBLIC_KEY}")
-    private String alipayPublicKey;
-    //初始化alipayClient用到的参数:签名类型
-    @Value("${SIGN_TYPE}")
-    private String signType;
+    @Autowired
+    private AlipayClientFactory alipayClientFactory;
 
     //#最长可借用时间，超时后视为逾期订单，单位：天
     @Value("${MAX_CAN_BORROW_TIME}")
@@ -67,11 +51,10 @@ public class CreditOverdueOrders {
     private ShopMapper shopMapper;
 
     //每隔fixedDelay（毫秒）执行一次
-    @Scheduled(fixedRate = 2000)
+    @Scheduled(fixedRate = 200000000)
     public void dealWithOverdueUsers() {
 
-        AlipayClient alipayClient = new DefaultAlipayClient(GlobalConfig.Z_CREDIT_SERVER_URL, appId, privateKey,
-                format, charset, alipayPublicKey, signType);
+        AlipayClient alipayClient = alipayClientFactory.newInstance();
         ZhimaMerchantOrderRentCompleteRequest request = new ZhimaMerchantOrderRentCompleteRequest();
 
         //查询出还没有归还的订单
@@ -110,8 +93,7 @@ public class CreditOverdueOrders {
         //物品归还门店名称,可选
         //String restoreShopName = "";
 
-        AlipayClient alipayClient = new DefaultAlipayClient(GlobalConfig.Z_CREDIT_SERVER_URL, appId, privateKey,
-                format, charset, alipayPublicKey, signType);
+        AlipayClient alipayClient = alipayClientFactory.newInstance();
         ZhimaMerchantOrderRentCompleteRequest request = new ZhimaMerchantOrderRentCompleteRequest();
 
         Map<String, Object> bizContentMap = new LinkedHashMap<>();
