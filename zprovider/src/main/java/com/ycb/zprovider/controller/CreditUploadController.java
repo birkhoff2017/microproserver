@@ -30,25 +30,23 @@ import java.util.Date;
 public class CreditUploadController {
     public static final Logger logger = LoggerFactory.getLogger(CreditUploadController.class);
     //初始化alipayClient用到的参数:支付宝网关
-    @Value("${serverUrl}")
-    private String serverUrl;
     //初始化alipayClient用到的参数:该appId必须设为开发者自己的生活号id
-    @Value("${appId}")
+    @Value("${APPID}")
     private String appId;
     //初始化alipayClient用到的参数:该私钥为测试账号私钥  开发者必须设置自己的私钥,否则会存在安全隐患
-    @Value("${privateKey}")
+    @Value("${PRIVATE_KEY}")
     private String privateKey;
     //初始化alipayClient用到的参数:仅支持JSON
-    @Value("${format}")
+    @Value("${FORMAT}")
     private String format;
     //初始化alipayClient用到的参数:字符编码-传递给支付宝的数据编码
-    @Value("${charset}")
+    @Value("${CHARSET}")
     private String charset;
     //初始化alipayClient用到的参数:该公钥为测试账号公钥,开发者必须设置自己的公钥 ,否则会存在安全隐患
-    @Value("${alipayPublicKey}")
+    @Value("${ALIPAY_PUBLIC_KEY}")
     private String alipayPublicKey;
     //初始化alipayClient用到的参数:签名类型
-    @Value("${signType}")
+    @Value("${SIGN_TYPE}")
     private String signType;
 
     @Autowired
@@ -76,7 +74,8 @@ public class CreditUploadController {
         //注：商户维度下，类目Code（categoryCode）+实体编号（entity_code）唯一，
         // 一个商户下相同类目code+实体编号多次调用，将按照上传时间（upload_time）更新，
         // 更新规则取最新的upload_time快照数据
-        String entityCode = shopStation.getId().toString();
+//        String entityCode = shopStation.getId().toString();
+        String entityCode = "10";
         //地址位置经度，取值范围：经度-180~180，中国地区经度范围：73.66~135.05，示例：83.66
         String longitude = shopStation.getLongitude();
         //地址位置纬度，取值范围：纬度-90~90，中国地区经度范围：纬度3.86~53.55	，示例：5.87
