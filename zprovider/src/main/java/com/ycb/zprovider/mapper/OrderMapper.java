@@ -98,11 +98,10 @@ public interface OrderMapper {
     void updateOrderStatusByOrderId(Order order);
 
     //根据信用借还的订单号进行更新订单
-    //订单完结时不再更新状态，因此去掉"status=#{status}, " +
     @Update("UPDATE ycb_mcs_tradelog SET " +
             "lastModifiedBy=#{lastModifiedBy}, " +
             "lastModifiedDate=#{lastModifiedDate}, " +
-            "paid=#{paid} " +
+            "status=#{status}, " +
             "alipay_fund_order_no=#{alipayFundOrderNo} " +
             "WHERE order_no=#{orderNo}")
     void updateOrderStatusByOrderNo(Order order);
@@ -144,15 +143,17 @@ public interface OrderMapper {
 
 
     //查询逾期未换的订单,即为信用借还订单，并且电池状态为借出状态
-    @Select("SELECT t.borrow_time,t.order_no,t.borrow_station_id " +
+    @Select(value = "SELECT t.borrow_time,t.order_no,t.borrow_station_id " +
             "FROM ycb_mcs_tradelog t " +
-            "WHERE t.platform=2 AND t.status=2")
+            "WHERE t.platform = 2 " +
+            "AND t.status = 2 " +
+            "AND DATE_ADD(borrow_time,INTERVAL ${maxCanBorrowTime} DAY) > NOW()")
     @Results(value = {
             @Result(property = "borrowTime", column = "borrow_time"),
             @Result(property = "orderNo", column = "order_no"),
             @Result(property = "borrowStationId", column = "borrow_station_id")}
     )
-    List<Order> findOverdueOrders();
+    List<Order> findOverdueOrders(@Param("maxCanBorrowTime") Integer maxCanBorrowTime);
 
 
     //根据信用借还订单的支付宝订单号来查询订单信息
