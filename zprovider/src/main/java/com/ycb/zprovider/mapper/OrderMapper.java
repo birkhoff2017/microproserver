@@ -89,10 +89,10 @@ public interface OrderMapper {
     void updateOrderStatus(Order order);
 
     //信用借还订单创建成功后，根据订单的id更改订单的状态
-    //在创建订单的时候填写了customer，故这里去掉 "customer=#{customer}, " +
     @Update("UPDATE ycb_mcs_tradelog SET " +
             "lastModifiedBy=#{lastModifiedBy}, " +
             "lastModifiedDate=#{lastModifiedDate}, " +
+            "orderNo=#{order_no}, " +
             "status=#{status}, " +
             "WHERE orderid=#{orderid}")
     void updateOrderStatusByOrderId(Order order);
