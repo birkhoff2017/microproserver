@@ -147,7 +147,7 @@ public interface OrderMapper {
             "FROM ycb_mcs_tradelog t " +
             "WHERE t.platform = 2 " +
             "AND t.status = 2 " +
-            "AND DATE_ADD(borrow_time,INTERVAL ${maxCanBorrowTime} DAY) > NOW()")
+            "AND DATE_ADD(borrow_time,INTERVAL ${maxCanBorrowTime} DAY) < NOW()")
     @Results(value = {
             @Result(property = "borrowTime", column = "borrow_time"),
             @Result(property = "orderNo", column = "order_no"),
