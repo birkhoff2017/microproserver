@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="x-ua-compatible" content="ie=edge">
+		<title>云充吧-支付宝</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,minimum-scale=1, maximum-scale=1, user-scalable=no">
+		<link rel="stylesheet" href="js/vendor/owl.carousel.2.1.0/assets/owl.carousel.min.css">
+		<link rel="stylesheet" href="js/vendor/owl.carousel.2.1.0/assets/owl.theme.default.min.css">
+		<link rel="stylesheet" href="css/listdetails.css">
+	</head>
+
+	<body style="background-image:url(img/two/shangpuxp.gif);background-repeat:no-repeat; background-size:100% 100%;background-color:#fff;width:100%;height:100%;">
+		<div class="pscenter">
+			<div class="details_content">
+				<div class="userinfo">
+					<!--商铺头像 start -->
+					<p class="shop_name">{{shop.name}}</p>
+					<!--商铺头像 end -->
+					<div class="borrow">
+						<img class="lend" style="width:2.5rem; height: 2.5rem;" src="img/list/b/l_.png"></img>
+						<span class="weui_cell_bd_p weui_cell_bd_p1">可借</span>
+						<img class="item_img repay" style="width: 2.5rem; height: 2.5rem;" src="img/list/b/l_.png"></img>
+						<span class="weui_cell_bd_p weui_cell_bd_p2">可还</span>
+					</div>
+				</div>
+				<div class="viewV">
+					<!--商铺地址  start -->
+					<div class="bottomtype dispersed">
+						<div class="dispersed1">
+							<img style="width:2rem; height:2rem;" mode="aspectFit" src="img/two/shopdw.png" class="viewH_img"></img>
+							<div class="bottom_textview3">{{shop.address}}</div>
+						</div>
+					</div>
+					<!--商铺地址 认证 end-->
+					<!--营业时间 start-->
+					<div class="bottomtype">
+						<img style="width:2rem; height:2rem;" mode="aspectFit" src="img/two/shoptime.jpg" class="viewH_img"></img>
+						<span class="bottom_textview1">营业时间：{{shop.stime}}-{{shop.etime}}</span>
+					</div>
+					<!--营业时间 end-->
+					<!--联系电话 start-->
+					<div class="bottomtype dispersed">
+						<div class="dispersed2">
+							<img style="width:2rem; height:2rem;" mode="aspectFit" src="img/two/phone.png" class="viewH_img"></img>
+							<span class="bottom_textview1">联系电话：</span>
+							<span class="call" bindtap="calling" data-phone="{{shop.phone}}">{{shop.phone}}</span>
+						</div>
+					</div>
+					<!--联系电话 end-->
+					<!--人均消费 start-->
+					<div class="bottomtype">
+						<img style="width:2rem;height:2rem;" mode="aspectFit" src="img/two/shopxiaof.png" class="viewH_img"></img>
+						<span class="bottom_textview1">人均消费：{{shop.cost}}元</apan>
+					</div>
+							<!--人均消费 end-->
+				</div>
+						<form >
+							<button formType="submit" class="button" size="default">马上导航</button>
+							<button formType="submit" class="button" size="default">借充电宝</button>
+						</form>
+			</div>
+		</div>
+						<script src="js/modernizr.js"></script>
+						<script src="js/vendor/jquery3.1.js"></script>
+						<script src="js/vendor/owl.carousel.2.1.0/owl.carousel.min.js"></script>
+						<script src="js/vendor/picturefill.min.js"></script>
+						<script src="js/listdetails.js"></script>
+	</body>
+
+</html>

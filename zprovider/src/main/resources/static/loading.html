@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="x-ua-compatible" content="ie=edge">
+		<title>云充吧-支付宝</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,minimum-scale=1, maximum-scale=1, user-scalable=no">
+		<link rel="stylesheet" href="js/vendor/owl.carousel.2.1.0/assets/owl.carousel.min.css">
+		<link rel="stylesheet" href="js/vendor/owl.carousel.2.1.0/assets/owl.theme.default.min.css">
+		<link rel="stylesheet" href="css/loading.css">
+	</head>
+
+	<body>
+		<div class="box">
+			<img class="loading" src="img/loading.gif" alt="loading" />
+		</div>
+		<script>
+			function ready(callback) {
+				// 如果jsbridge已经注入则直接调用
+				if(window.AlipayJSBridge) {
+					callback && callback();
+				} else {
+					// 如果没有注入则监听注入的事件
+					document.addEventListener('AlipayJSBridgeReady', callback, false);
+				}
+			}
+			ready(function() {
+				AlipayJSBridge.call('getCurrentLocation', {
+					bizType: 'didi'
+				}, function(result) {
+					if(result.error) {
+						alert(result.errorMessage);
+						return;
+					}
+//					alert(JSON.stringify(result));
+					console.log(result.latitude, result.longitude);
+					var latitude = result.latitude;
+					var longitude = result.longitude;
+					if(latitude != null && longitude != null) {
+					    alert("list.html?latitude="+latitude+"&longitude="+longitude);
+						location.href = "list.html?latitude="+latitude+"&longitude="+longitude;
+					}
+				});
+			});
+		</script>
+	</body>
+
+</html>
