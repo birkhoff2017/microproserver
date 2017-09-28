@@ -25,10 +25,12 @@ public class AuthInterceptor extends WebMvcConfigurerAdapter {
                 .addPathPatterns("/wxpay/payment")
                 .addPathPatterns("/refund/getRefundList")
                 .addPathPatterns("/refund/doRefund")
-                .addPathPatterns("/shop/getShopList")
-                .addPathPatterns("/shop/getShopInfo")
+//                .addPathPatterns("/shop/getShopList")
+//                .addPathPatterns("/shop/getShopInfo")
                 .addPathPatterns("/user/userInfo")
-                .excludePathPatterns("/user/login");
+                .excludePathPatterns("/user/login")
+                .excludePathPatterns("/shop/getShopList")
+                .excludePathPatterns("/shop/getShopInfo");
         // super.addInterceptors(registry);
     }
 }

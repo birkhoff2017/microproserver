@@ -21,6 +21,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("queryOrder")
+//@Service
 public class CreditQueryOrderService {
 
     public static final Logger logger = LoggerFactory.getLogger(CreditQueryOrderService.class);

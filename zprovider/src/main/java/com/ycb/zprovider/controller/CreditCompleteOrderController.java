@@ -10,12 +10,13 @@ import com.ycb.zprovider.mapper.ShopMapper;
 import com.ycb.zprovider.utils.JsonUtils;
 import com.ycb.zprovider.vo.AlipayClientFactory;
 import com.ycb.zprovider.vo.Order;
-import com.ycb.zprovider.vo.Shop;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -43,18 +44,18 @@ public class CreditCompleteOrderController {
     private ShopMapper shopMapper;
 
     @RequestMapping(value = "/restore", method = RequestMethod.POST)
-    @ResponseBody
     //orderid   订单编号，是在创建信用借还订单的时候商家创建的订单编号
     public void CompleteOrder(@RequestParam("orderid") String orderid) {
         AlipayClient alipayClient = alipayClientFactory.newInstance();
         ZhimaMerchantOrderRentCompleteRequest request = new ZhimaMerchantOrderRentCompleteRequest();
         //根据orderID获得信用借还订单的支付宝的编号
         Order order = orderMapper.findOrderByOrderId(orderid);
-        String orderNo = order.getOrderNo();
+        //String orderNo = order.getOrderNo();
         //信用借还的产品码:w1010100000000002858
         String productCode = GlobalConfig.Z_PRODUCT_CODE;
         //物品归还时间	2016-10-01 12:00:00
-        String restoreTime = new SimpleDateFormat("YYYY-MM-dd HH:MM:ss").format(order.getReturnTime());
+//        String restoreTime = new SimpleDateFormat("YYYY-MM-dd HH:MM:ss").format(order.getReturnTime());
+        String restoreTime = new SimpleDateFormat("YYYY-MM-dd HH:MM:ss").format(new Date());
         /*
         金额类型：
         RENT:租金
@@ -63,11 +64,13 @@ public class CreditCompleteOrderController {
         String payAmountType = "RENT";
         //支付金额	100.00
         //payAmount 需要支付的金额
-        String payAmount = order.getUsefee().toString();
+//        String payAmount = order.getUsefee().toString();
+        String payAmount = "0";
         //restoreShopName 物品归还门店名称,例如肯德基文三路门店
-        Long returnShopId = order.getReturnShopId();
-        Shop shopInfo = shopMapper.findShopById(returnShopId);
-        String restoreShopName = shopInfo.getName();
+//        Long returnShopId = order.getReturnShopId();
+//        Shop shopInfo = shopMapper.findShopById(returnShopId);
+//        String restoreShopName = shopInfo.getName();
+        String restoreShopName = "马记拉面";
 
         Map<String, Object> bizContentMap = new LinkedHashMap<>();
         bizContentMap.put("order_no", orderid);
@@ -76,7 +79,7 @@ public class CreditCompleteOrderController {
         bizContentMap.put("pay_amount_type", payAmountType);
         bizContentMap.put("pay_amount", payAmount);
         bizContentMap.put("pay_amount", 0);
-        bizContentMap.put("restore_shop_name", "朝阳区");
+        bizContentMap.put("restore_shop_name", restoreShopName);
 
         request.setBizContent(JsonUtils.writeValueAsString(bizContentMap));
         ZhimaMerchantOrderRentCompleteResponse response = null;
@@ -87,34 +90,10 @@ public class CreditCompleteOrderController {
         }
         if (response.isSuccess()) {
             System.out.println("调用成功,信用借还订单完结");
-            //更新订单信息
-//            updateOrder(response);
-            //通知用户归还成功
-//            sendMessage(response.getUserId(), order, restoreShopName);
         } else {
             System.out.println("调用失败");
             System.out.println("订单完结" + response.getMsg());
             System.out.println(response.getBody());
         }
     }
-
-    //用户归还后，更新订单表的信息
-    private void updateOrder(ZhimaMerchantOrderRentCompleteResponse response) {
-        //借用人支付宝userId.	例如2088202924240029
-        String responseUserId = response.getUserId();
-        //信用借还的订单号,例如100000
-        String responseOrderNo = response.getOrderNo();
-        //资金流水号，用于商户与支付宝进行对账	2088000000000000
-        String responseAlipayFundOrderNo = response.getAlipayFundOrderNo();
-
-        Order order = new Order();
-        order.setLastModifiedBy("SYS:completecreditpay");
-        order.setLastModifiedDate(new Date());
-
-        //因为这里只返回了信用借还的订单号，所以需要根据信用借还的订单号进行更新订单
-        order.setOrderNo(responseOrderNo);
-        order.setAlipayFundOrderNo(responseAlipayFundOrderNo);
-        orderMapper.updateOrderStatusByOrderNo(order);
-    }
-
 }
