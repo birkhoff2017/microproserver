@@ -45,9 +45,6 @@ public class CreditOverdueOrders {
     private OrderMapper orderMapper;
 
     @Autowired
-    private FeeStrategyService feeStrategyService;
-
-    @Autowired
     private ShopMapper shopMapper;
 
     //每隔fixedDelay（毫秒）执行一次

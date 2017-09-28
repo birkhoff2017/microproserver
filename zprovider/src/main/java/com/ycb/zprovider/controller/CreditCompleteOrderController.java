@@ -7,7 +7,6 @@ import com.alipay.api.response.ZhimaMerchantOrderRentCompleteResponse;
 import com.ycb.zprovider.constant.GlobalConfig;
 import com.ycb.zprovider.mapper.OrderMapper;
 import com.ycb.zprovider.mapper.ShopMapper;
-import com.ycb.zprovider.service.FeeStrategyService;
 import com.ycb.zprovider.utils.JsonUtils;
 import com.ycb.zprovider.vo.AlipayClientFactory;
 import com.ycb.zprovider.vo.Order;
@@ -58,9 +57,6 @@ public class CreditCompleteOrderController {
 
     @Autowired
     private OrderMapper orderMapper;
-
-    @Autowired
-    private FeeStrategyService feeStrategyService;
 
     @Autowired
     private ShopMapper shopMapper;

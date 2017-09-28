@@ -24,7 +24,7 @@ import java.util.Map;
  * 查询设备信息
  */
 @RestController
-@RequestMapping("/creditmachineinfo")
+@RequestMapping("/machineinfo")
 public class CreditMachineInfoController {
 
     public static final Logger logger = LoggerFactory.getLogger(CreditMachineInfoController.class);
@@ -60,9 +60,7 @@ public class CreditMachineInfoController {
         Map<String, Object> data = new HashMap<>();
         try {
             User user = this.userMapper.findUserinfoByOpenid(redisService.getKeyValue(session));
-            // 解析qrcode，根据机器sid，获取机器状态属性值
-            //String[] urlArr = qrcode.trim().toLowerCase().split("/");
-            //String sid = urlArr[urlArr.length - 1];
+
             String cable_type = stationMapper.getUsableBatteries(Long.valueOf(sid));
             // 判断设备是否在线
             String lastHearTime = redisService.getKeyValue(sid);

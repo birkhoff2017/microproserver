@@ -5,10 +5,8 @@ import com.alipay.api.AlipayClient;
 import com.alipay.api.request.ZhimaMerchantOrderRentCreateRequest;
 import com.alipay.api.response.ZhimaMerchantOrderRentCreateResponse;
 import com.ycb.zprovider.constant.GlobalConfig;
-import com.ycb.zprovider.mapper.OrderMapper;
 import com.ycb.zprovider.mapper.ShopMapper;
-import com.ycb.zprovider.mapper.StationMapper;
-import com.ycb.zprovider.service.SocketService;
+import com.ycb.zprovider.service.AlipayOrderService;
 import com.ycb.zprovider.utils.JsonUtils;
 import com.ycb.zprovider.vo.AlipayClientFactory;
 import com.ycb.zprovider.vo.Shop;
@@ -17,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,29 +37,22 @@ public class CreditCreateOrderController {
     //#最长可借用时间，超时后视为逾期订单，单位：天
     @Value("${MAX_CAN_BORROW_TIME}")
     private Integer maxCanBorrowTime;
+
     @Autowired
     private ShopMapper shopMapper;
-    @Autowired
-    private OrderMapper orderMapper;
-    @Autowired
-    private StationMapper stationMapper;
-    @Autowired
-    private SocketService socketService;
 
     @Autowired
     private AlipayClientFactory alipayClientFactory;
+
+    @Autowired
+    private AlipayOrderService alipayOrderService;
 
     @RequestMapping(value = "/createOrder")
     @ResponseBody
     //sid   设备id
     //cableType 数据线类型
     //session   用户的session，去redis中进行比对查询
-//    public String createOrder(@RequestParam("sid") String sid, @RequestParam("cable_type") String cableType, @RequestParam("session") String session) {
-    public String createOrder() {
-        //模拟请求参数
-        String sid = "1";
-        String cableType = "1";
-        String session = "test";
+    public String createOrder(@RequestParam("sid") String sid, @RequestParam("cable_type") String cableType, @RequestParam("session") String session) {
 
         AlipayClient alipayClient = alipayClientFactory.newInstance();
         ZhimaMerchantOrderRentCreateRequest request = new ZhimaMerchantOrderRentCreateRequest();
@@ -144,7 +136,7 @@ public class CreditCreateOrderController {
         String expiryTime = new SimpleDateFormat("YYYY-MM-dd HH:MM:ss").format(new Date(l));
 
         //创建一个未支付订单
-//        alipayOrderService.createPreOrder(outOrderNo, sid, cableType, session);
+        alipayOrderService.createPreOrder(outOrderNo, sid, cableType, session);
 
         Map<String, Object> bizContentMap = new LinkedHashMap<>();
         bizContentMap.put("invoke_type", "WINDOWS");
