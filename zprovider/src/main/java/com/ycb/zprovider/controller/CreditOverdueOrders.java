@@ -7,7 +7,6 @@ import com.alipay.api.response.ZhimaMerchantOrderRentCompleteResponse;
 import com.ycb.zprovider.constant.GlobalConfig;
 import com.ycb.zprovider.mapper.OrderMapper;
 import com.ycb.zprovider.mapper.ShopMapper;
-import com.ycb.zprovider.service.FeeStrategyService;
 import com.ycb.zprovider.utils.JsonUtils;
 import com.ycb.zprovider.vo.AlipayClientFactory;
 import com.ycb.zprovider.vo.Order;
@@ -48,14 +47,14 @@ public class CreditOverdueOrders {
     private ShopMapper shopMapper;
 
     //每隔fixedDelay（毫秒）执行一次
-    @Scheduled(fixedRate = 200000000)
+    @Scheduled(fixedRate = 2000000)
     public void dealWithOverdueUsers() {
 
         AlipayClient alipayClient = alipayClientFactory.newInstance();
         ZhimaMerchantOrderRentCompleteRequest request = new ZhimaMerchantOrderRentCompleteRequest();
 
         //查询出还没有归还的订单
-        List<Order> overdueOrders = orderMapper.findOverdueOrders(maxCanBorrowTime);
+        List<Order> overdueOrders = orderMapper.findOverdueOrders(1);
 
         for (int i = 0; i < overdueOrders.size(); i++) {
             Order order = overdueOrders.get(i);
@@ -108,30 +107,8 @@ public class CreditOverdueOrders {
         }
         if (response.isSuccess()) {
             System.out.println("调用成功,信用借还订单完结");
-            //更新订单信息
-            updateOverdueOrder(response);
         } else {
             System.out.println("调用失败");
         }
-    }
-
-    //调用信用借还完结接口完结订单后，更新逾期订单信息，将返回的资金流水号存入数据库
-    private void updateOverdueOrder(ZhimaMerchantOrderRentCompleteResponse response) {
-        //信用借还的订单号,例如100000
-        String responseOrderNo = response.getOrderNo();
-        //资金流水号，用于商户与支付宝进行对账	2088000000000000
-        String responseAlipayFundOrderNo = response.getAlipayFundOrderNo();
-
-        Order order = new Order();
-        order.setLastModifiedBy("SYS:completecreditpay");
-        order.setLastModifiedDate(new Date());
-        //更新订单状态
-        order.setStatus(92);//租金已扣完（未归还）
-
-        //因为这里只返回了信用借还的订单号，所以需要根据信用借还的订单号进行更新订单
-        order.setOrderNo(responseOrderNo);
-        order.setAlipayFundOrderNo(responseAlipayFundOrderNo);
-        orderMapper.updateOrderStatusByOrderNo(order);
-
     }
 }

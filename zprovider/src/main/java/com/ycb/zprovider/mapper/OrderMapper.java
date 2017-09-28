@@ -78,15 +78,11 @@ public interface OrderMapper {
             "#{usefee},#{customer},#{borrowShopId},#{borrowShopStationId},#{borrowStationId},#{cable},#{orderNo},#{alipayFundOrderNo})")
     void saveOrder(Order order);
 
+    //对于完结的逾期未换订单，更新订单状态
     @Update("UPDATE ycb_mcs_tradelog SET " +
-            "lastModifiedBy=#{lastModifiedBy}, " +
-            "lastModifiedDate=#{lastModifiedDate}, " +
             "status=#{status}, " +
-            "paid=#{paid} " +
-            "order_no=#{orderNo} " +
-            "alipay_fund_order_no=#{alipayFundOrderNo} " +
             "WHERE orderid=#{orderid}")
-    void updateOrderStatus(Order order);
+    void updateOverdueOrderStatusByOrderId(Order order);
 
     //信用借还订单创建成功后，根据订单的id更改订单的状态
     @Update("UPDATE ycb_mcs_tradelog SET " +
@@ -97,14 +93,13 @@ public interface OrderMapper {
             "WHERE orderid=#{orderid}")
     void updateOrderStatusByOrderId(Order order);
 
-    //根据信用借还的订单号进行更新订单
+    //根据信用借还的订单号进行更新订单"status=#{status}, " +
     @Update("UPDATE ycb_mcs_tradelog SET " +
             "lastModifiedBy=#{lastModifiedBy}, " +
             "lastModifiedDate=#{lastModifiedDate}, " +
-            "status=#{status}, " +
             "alipay_fund_order_no=#{alipayFundOrderNo} " +
-            "WHERE order_no=#{orderNo}")
-    void updateOrderStatusByOrderNo(Order order);
+            "WHERE orderid=#{orderid}")
+    void updateOrderByOrderId(Order order);
 
     @Select("SELECT customer " +
             "FROM ycb_mcs_tradelog where orderid = #{orderid}")
@@ -142,7 +137,7 @@ public interface OrderMapper {
     Integer findUserOrderNum(User user);
 
 
-    //查询逾期未换的订单,即为信用借还订单，并且电池状态为借出状态
+    //查询逾期未换的订单,即为信用借还订单，并且电池状态为借出状态，已经超过最长借出时间
     @Select(value = "SELECT t.borrow_time,t.order_no,t.borrow_station_id " +
             "FROM ycb_mcs_tradelog t " +
             "WHERE t.platform = 2 " +

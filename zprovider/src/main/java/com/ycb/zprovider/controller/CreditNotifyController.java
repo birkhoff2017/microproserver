@@ -49,6 +49,10 @@ public class CreditNotifyController {
     private StationMapper stationMapper;
     @Autowired
     private SocketService socketService;
+
+    /**
+     * 注意，这里自动注入不了，为了测试已经将CreditQueryOrderService上的注解改为了controller，实际使用时需要改回来
+     */
     @Autowired
     private CreditQueryOrderService creditQueryOrderService;
 
@@ -86,12 +90,12 @@ public class CreditNotifyController {
             //对于订单创建事件
             if ("ORDER_CREATE_NOTIFY".equals(notifyType)) {
                 //根据查询到的信息更新订单信息
-                updateOrder(creditOrder, order, outOrderNo);
+                updateOrder(order, outOrderNo);
                 //弹出电池
                 borrowBattery(outOrderNo, creditOrder, order);
             } else if ("ORDER_COMPLETE_NOTIFY".equals(notifyType)) {
                 //更新订单信息
-                updateComplateOrder(orderNo, creditOrder, order);
+                updateComplateOrder(creditOrder, order);
             }
             //返回 success
             printResponse(response, "success");
@@ -107,30 +111,31 @@ public class CreditNotifyController {
         String cableType = order.getCable().toString();
         //获取设备的mac，在弹出电池时会使用
         String mac = stationMapper.getStationMac(Long.valueOf(sid));
-        //借用者的userId
-        String responseUserId = creditOrder.getUserId();
         socketService.SendCmd("ACT:borrow_battery;EVENT_CODE:1;STATIONID:" + sid + ";MAC:" + mac + ";ORDERID:" + outOrderNo + ";COLORID:7;CABLE:" + cableType + ";\r\n");
     }
 
     /*
     当调用支付宝完结订单接口成功时，更新订单的状态
      */
-    private void updateComplateOrder(String orderNo, CreditOrder creditOrder, Order order) {
+    private void updateComplateOrder(CreditOrder creditOrder, Order order) {
         //资金流水号，用于商户与支付宝进行对账	2088000000000000
         String alipayFundOrderNo = creditOrder.getAlipayFundOrderNo();
         //更新订单信息
         order.setLastModifiedBy("SYS:completecreditpay");
         order.setLastModifiedDate(new Date());
-        //因为这里只返回了信用借还的订单号，所以需要根据信用借还的订单号进行更新订单
-        order.setOrderNo(orderNo);
         order.setAlipayFundOrderNo(alipayFundOrderNo);
-        orderMapper.updateOrderStatusByOrderNo(order);
+        orderMapper.updateOrderByOrderId(order);
+        //判断是正常归还订单还是逾期订单，如果是逾期未还的完结订单，再将status设置为92'租金已扣完(未归还)'
+        if ("DAMAGE".equals(creditOrder.getPayAmountType())) {
+            order.setStatus(92);
+            orderMapper.updateOverdueOrderStatusByOrderId(order);
+        }
     }
 
     /*
     当调用支付宝的创建信用借还订单接口成功时，更新订单的状态
      */
-    private void updateOrder(CreditOrder creditOrder, Order order, String outOrderNo) {
+    private void updateOrder(Order order, String outOrderNo) {
         order.setLastModifiedBy("SYS:updatecreditpay");
         order.setLastModifiedDate(new Date());
         order.setStatus(1);//支付状态,0为未支付，1为已经支付

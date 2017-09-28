@@ -5,8 +5,11 @@ import com.alipay.api.AlipayClient;
 import com.alipay.api.request.ZhimaMerchantOrderRentCreateRequest;
 import com.alipay.api.response.ZhimaMerchantOrderRentCreateResponse;
 import com.ycb.zprovider.constant.GlobalConfig;
+import com.ycb.zprovider.mapper.OrderMapper;
 import com.ycb.zprovider.mapper.ShopMapper;
+import com.ycb.zprovider.mapper.StationMapper;
 import com.ycb.zprovider.service.AlipayOrderService;
+import com.ycb.zprovider.service.SocketService;
 import com.ycb.zprovider.utils.JsonUtils;
 import com.ycb.zprovider.vo.AlipayClientFactory;
 import com.ycb.zprovider.vo.Shop;
@@ -16,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.text.SimpleDateFormat;
@@ -37,18 +39,21 @@ public class CreditCreateOrderController {
     //#最长可借用时间，超时后视为逾期订单，单位：天
     @Value("${MAX_CAN_BORROW_TIME}")
     private Integer maxCanBorrowTime;
-
     @Autowired
     private ShopMapper shopMapper;
+    @Autowired
+    private OrderMapper orderMapper;
+    @Autowired
+    private StationMapper stationMapper;
+    @Autowired
+    private SocketService socketService;
 
     @Autowired
     private AlipayClientFactory alipayClientFactory;
-
     @Autowired
     private AlipayOrderService alipayOrderService;
 
     @RequestMapping(value = "/createOrder")
-    @ResponseBody
     //sid   设备id
     //cableType 数据线类型
     //session   用户的session，去redis中进行比对查询
@@ -59,7 +64,7 @@ public class CreditCreateOrderController {
         //回调到商户的url地址
         //商户在组装订单创建https请求时，会附带invoke_return_url参数，当用户完成借用准入及资金处理后，
         // 在借用完成页面会自动回调到商户提供的invoke_return_url地址链接，目前商户链接跳转是通过自动跳转的方式实现。
-        String invokeReturnUrl = "www.baidu.com";
+        String invokeReturnUrl = "http://birkhoff2017.55555.io/loading.html";
         //下面的代码用来生成外部订单号，就是商户自己的订单号
         String date = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
         Random random = new Random();
@@ -123,10 +128,6 @@ public class CreditCreateOrderController {
         Date borrowDate = new Date();
         String borrowTime = new SimpleDateFormat("YYYY-MM-dd HH:MM:ss").format(borrowDate);
         //下面的代码用于处理到期时间
-        //获取最长时长
-//        Long maxFeeTime = feeStrategy.getMaxFeeTime();
-        //获取最长时长的单位
-//        Long maxFeeUnit = feeStrategy.getMaxFeeUnit();
         //用开始租借的时间加上最长时长
         long l = borrowDate.getTime() + maxCanBorrowTime * 24 * 60 * 60 * 1000;
         //示例：2017-04-30 12:06:31
@@ -156,17 +157,23 @@ public class CreditCreateOrderController {
 
         request.setBizContent(JsonUtils.writeValueAsString(bizContentMap));
         ZhimaMerchantOrderRentCreateResponse response = null;
+
         try {
             response = alipayClient.pageExecute(request, "GET"); // 这里一定要用GET模式
         } catch (AlipayApiException e) {
             e.printStackTrace();
         }
+        //返回的map
+        Map<String,String> returnMap = new LinkedHashMap<>();
         if (response.isSuccess()) {
             System.out.println("调用成功，信用借还订单创建成功");
             String url = response.getBody(); // 从body中获取url
             System.out.println("generateRentUrl url:" + url);
-            return url;
+            returnMap.put("msg","success");
+            returnMap.put("url",url);
+            return JsonUtils.writeValueAsString(returnMap);
         } else {
+            returnMap.put("msg","fail");
             System.out.println("调用失败");
             logger.error("调用创建信用借还订单失败，错误代码：" + response.getCode() + "错误信息：" + response.getMsg() +
                     "错误子代码" + response.getSubCode() + "错误子信息：" + response.getSubMsg());

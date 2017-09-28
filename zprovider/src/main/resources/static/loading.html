@@ -26,6 +26,12 @@
 				}
 			}
 			ready(function() {
+                var url_param = location.search; //获取url中"?"符后的字串
+                if(url_param.indexOf("return_type")<=0){
+					alert("电池借出成功！");
+                    AlipayJSBridge.call('popWindow');
+				}
+
 				AlipayJSBridge.call('getCurrentLocation', {
 					bizType: 'didi'
 				}, function(result) {
@@ -33,12 +39,9 @@
 						alert(result.errorMessage);
 						return;
 					}
-//					alert(JSON.stringify(result));
-					console.log(result.latitude, result.longitude);
 					var latitude = result.latitude;
 					var longitude = result.longitude;
 					if(latitude != null && longitude != null) {
-					    alert("list.html?latitude="+latitude+"&longitude="+longitude);
 						location.href = "list.html?latitude="+latitude+"&longitude="+longitude;
 					}
 				});
