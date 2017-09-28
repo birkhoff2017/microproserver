@@ -19,7 +19,7 @@ var session = Request['session'];
 $(function () {
     $.ajax({
         type: "post",
-        url: "http://birkhoff2017.55555.io/machineinfo/getMachineInfo",
+        url: "http://www.duxinyuan.top/machineinfo/getMachineInfo",
         data: {
             sid: sid,
             session: session
@@ -50,7 +50,7 @@ $(function () {
 $('.button-right').click(function () {
     $.ajax({
         type: "post",
-        url: "http://birkhoff2017.55555.io/creditcreate/createOrder",
+        url: "http://www.duxinyuan.top/creditcreate/createOrder",
         data: {
             sid: sid,
             session: session,
@@ -67,7 +67,7 @@ $('.button-right').click(function () {
 $('.button-left').click(function () {
     $.ajax({
         type: "post",
-        url: "http://birkhoff2017.55555.io/creditcreate/createOrder",
+        url: "http://www.duxinyuan.top/creditcreate/createOrder",
         data: {
             sid: sid,
             session: session,

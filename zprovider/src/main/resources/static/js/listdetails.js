@@ -4,7 +4,7 @@ $(function () {
     var shop_id = Request['shop_id'];
     $.ajax({
         type: "post",
-        url: "http://birkhoff2017.55555.io/shop/getShopInfo",
+        url: "http://www.duxinyuan.top/shop/getShopInfo",
         data: {
             shop_id: shop_id
         },

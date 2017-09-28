@@ -5,10 +5,9 @@ $(function() {
     var latitude = Request['latitude'];
 	$.ajax({
 		type: "post",
-		url: "http://birkhoff2017.55555.io/shop/getShopList",
+		url: "http://www.duxinyuan.top/shop/getShopList",
 		data: {
 			// session: session,
-			session: "test",
             longitude: longitude,
             latitude: latitude
 		},
@@ -36,7 +35,7 @@ $(function() {
             }
 
             $('.viewH').click(function () {
-                location.href = "http://birkhoff2017.55555.io/listdetails.html?shop_id="+this.lastElementChild.value;
+                location.href = "http://www.duxinyuan.top/listdetails.html?shop_id="+this.lastElementChild.value;
             });
 		}
 	})

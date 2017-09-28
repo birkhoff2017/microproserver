@@ -26,10 +26,11 @@ import java.util.Map;
 
 /**
  * Created by Huo on 2017/9/26.
+ * 应用网关
  * 支付宝回调接口，负责处理信用借还订单创建和完结回调后的业务逻辑
  */
 @Controller
-@RequestMapping("/creditnotify")
+@RequestMapping("/gateway")
 public class CreditNotifyController {
 
     public static final Logger logger = LoggerFactory.getLogger(CreditNotifyController.class);
@@ -57,6 +58,7 @@ public class CreditNotifyController {
     private CreditQueryOrderService creditQueryOrderService;
 
     /**
+     * 应用网关
      * 异步通知请求入口.
      */
     @RequestMapping(value = "/notify", method = {RequestMethod.POST})

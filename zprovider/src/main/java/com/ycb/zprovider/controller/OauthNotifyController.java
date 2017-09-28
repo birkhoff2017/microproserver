@@ -62,32 +62,31 @@ public class OauthNotifyController {
             // 设置session过期
             redisService.setKeyValueTimeout(session, alipayUserId, 7200);
 
-            Integer optlock = this.userMapper.findByOpenid(alipayUserId);
-            if (optlock == null) {
-                User user = new User();
-                user.setOpenid(alipayUserId);
-                user.setDeposit(BigDecimal.ZERO);
-                user.setRefund(BigDecimal.ZERO);
-                user.setUsablemoney(BigDecimal.ZERO);
-                user.setRefunded(BigDecimal.ZERO);
-                user.setPlatform(1);//支付宝
-                user.setCreatedBy("SYS:login");
-                user.setCreatedDate(new Date());
-                this.userMapper.insert(user);
-                //判断stationId是否为空 如果空 说明是用户中心里面的授权，不为空则是扫码租借时的授权
-                if (StringUtils.isEmpty(stationId)){
-                    //跳转
-                    response.sendRedirect("http://www.duxinyuan.top/userInfo.html?session=" + session);
-                }else {
+            //判断stationId是否为空 如果空 说明是用户中心里面的授权，不为空则是扫码租借时的授权
+            if (StringUtils.isEmpty(stationId)){
+                //跳转到用户中心
+                response.sendRedirect("http://www.duxinyuan.top/userInfo.html?session=" + session);
+            }else {
+                Integer optlock = this.userMapper.findByOpenid(alipayUserId);
+                if (optlock == null) {
+                    User user = new User();
+                    user.setOpenid(alipayUserId);
+                    user.setDeposit(BigDecimal.ZERO);
+                    user.setRefund(BigDecimal.ZERO);
+                    user.setUsablemoney(BigDecimal.ZERO);
+                    user.setRefunded(BigDecimal.ZERO);
+                    user.setPlatform(1);//支付宝
+                    user.setCreatedBy("SYS:login");
+                    user.setCreatedDate(new Date());
+                    this.userMapper.insert(user);
                     //让用户关注
                     String url = "http://p.alipay.com/P/RuMIvyjz";
                     response.sendRedirect(url);
+                }else {
+                    optlock++;
+                    this.userMapper.update(optlock, new Date(), alipayUserId);
+                    response.sendRedirect("http://www.duxinyuan.top/borrow.html?sid=" + stationId + "&session=" + session);
                 }
-
-            }else {
-                optlock++;
-                this.userMapper.update(optlock, new Date(), alipayUserId);
-                response.sendRedirect("http://www.duxinyuan.top/borrow.html?sid=" + stationId + "&session=" + session);
             }
         } catch (AlipayApiException e) {
             //处理异常

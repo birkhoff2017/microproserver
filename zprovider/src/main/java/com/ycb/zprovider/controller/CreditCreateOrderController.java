@@ -64,7 +64,7 @@ public class CreditCreateOrderController {
         //回调到商户的url地址
         //商户在组装订单创建https请求时，会附带invoke_return_url参数，当用户完成借用准入及资金处理后，
         // 在借用完成页面会自动回调到商户提供的invoke_return_url地址链接，目前商户链接跳转是通过自动跳转的方式实现。
-        String invokeReturnUrl = "http://birkhoff2017.55555.io/loading.html";
+        String invokeReturnUrl = "http://www.duxinyuan.top/loading.html";
         //下面的代码用来生成外部订单号，就是商户自己的订单号
         String date = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
         Random random = new Random();
@@ -79,7 +79,7 @@ public class CreditCreateOrderController {
         //物品名称,最长不能超过14个汉字
         String goodsName = "充电宝";
         //租金信息描述 ,长度不超过14个汉字，只用于页面展示给C端用户，除此之外无其他意义。
-        String rentInfo = "1小时免费，1元/天";
+        String rentInfo = "1小时免费，10元/天";
         /*
         租金单位，租金+租金单位组合才具备实际的租金意义。
         取值定义如下：
@@ -88,7 +88,7 @@ public class CreditCreateOrderController {
         YUAN:元
         YUAN_ONCE: 元/次
          */
-        String rentUnit = "HOUR_YUAN";
+        String rentUnit = "DAY_YUAN";
         /*
         租金，租金+租金单位组合才具备实际的租金意义。
         >0.00元，代表有租金
@@ -98,7 +98,7 @@ public class CreditCreateOrderController {
         //这里还需要商议
 //        FeeStrategy feeStrategy = feeStrategyService.findFeeStrategyByStation(Long.valueOf(sid));
 //        String rentAmount = feeStrategy.getFixed().toString();
-        String rentAmount = "0";
+        String rentAmount = "0.10";
         /*
         押金，金额单位：元。
         注：不允许免押金的用户按此金额支付押金；当物品丢失时，赔偿金额不得高于该金额。
