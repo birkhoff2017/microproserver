@@ -40,6 +40,20 @@ $(function () {
             $('.repay').attr('src', "img/list/b/l_"+canReturn+".png");
         }
     })
+    //拨打电话
+    var btn = document.querySelector('#contact_phone');
+    btn.addEventListener('click', function(){
+        ap.makePhoneCall($('#contact_phone').html());
+    });
+
+    //扫一扫
+    var btnScanQR = document.querySelector('#J_btn_scanQR');
+    btnScanQR.addEventListener('click', function(){
+        ap.scan(function(res){
+            ap.alert(res.code);
+        });
+    });
+
 })
 
 function GetRequest() {
