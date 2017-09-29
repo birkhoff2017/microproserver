@@ -2,6 +2,7 @@ $(function () {
     var Request = new Object();
     Request = GetRequest();
     var shop_id = Request['shop_id'];
+
     $.ajax({
         type: "post",
         url: "http://www.duxinyuan.top/shop/getShopInfo",
@@ -38,6 +39,11 @@ $(function () {
             var canReturn = empty;
             $('.lend').attr('src', "img/list/b/l_"+canborrow+".png");
             $('.repay').attr('src', "img/list/b/l_"+canReturn+".png");
+
+            $("#J_btn_scanQR").click(function () {
+                window.alert("请使用支付宝扫一扫，扫描充电柜支付宝二维码");
+                return false;
+            });
         }
     })
     //拨打电话
@@ -47,12 +53,13 @@ $(function () {
     });
 
     //扫一扫
-    var btnScanQR = document.querySelector('#J_btn_scanQR');
-    btnScanQR.addEventListener('click', function(){
-        ap.scan(function(res){
-            ap.alert(res.code);
-        });
-    });
+     //var btnScanQR = document.querySelector('#J_btn_scanQR');
+    // btnScanQR.addEventListener('click', function(){
+    //     // ap.scan(function(res){
+    //     //     ap.alert(res.code);
+    //     // });
+    //     alert("请使用支付宝扫一扫，扫描充电柜支付宝二维码");
+    // });
 
 })
 

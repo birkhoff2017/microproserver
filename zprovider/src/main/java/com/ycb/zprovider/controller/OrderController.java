@@ -47,24 +47,27 @@ public class OrderController {
             String openid = redisService.getKeyValue(session);
             User user = this.userMapper.findUserinfoByOpenid(openid);
             List<TradeLog> tradeLogList = this.orderMapper.findTradeLogs(user.getId());
-            for (int i = 0; i < tradeLogList.size(); i++) {
-                tradeLogList.get(i).setFeeStr(feeStrategyService.transFeeStrategy(tradeLogList.get(i).getFeeStrategy()));
-                tradeLogList.get(i).setUseFee(feeStrategyService.calUseFee(tradeLogList.get(i).getFeeStrategy(),
-                        tradeLogList.get(i).getDuration(),
-                        tradeLogList.get(i).getStatus(),
-                        tradeLogList.get(i).getUseFee()));
-            }
-            if (null != tradeLogList) {
-                Map<String, List> data = new HashMap<String, List>();
-                data.put("orders", tradeLogList);
-                bacMap.put("data", data);
-                bacMap.put("code", 0);
-                bacMap.put("msg", "成功");
-            } else {
+            if (null != tradeLogList && tradeLogList.size()!=0){
+                for (int i = 0; i < tradeLogList.size(); i++) {
+                    tradeLogList.get(i).setFeeStr(feeStrategyService.transFeeStrategy(tradeLogList.get(i).getFeeStrategy()));
+                    tradeLogList.get(i).setUseFee(feeStrategyService.calUseFee(tradeLogList.get(i).getFeeStrategy(),
+                            tradeLogList.get(i).getDuration(),
+                            tradeLogList.get(i).getStatus(),
+                            tradeLogList.get(i).getUseFee()));
+                }
+
+                    Map<String, List> data = new HashMap<String, List>();
+                    data.put("orders", tradeLogList);
+                    bacMap.put("data", data);
+                    bacMap.put("code", 0);
+                    bacMap.put("msg", "成功");
+
+            }else {
                 bacMap.put("data", null);
                 bacMap.put("code", 1);
                 bacMap.put("msg", "用户暂无租借记录");
             }
+
         } catch (Exception e) {
             logger.error(e.getMessage());
             bacMap.put("data", null);

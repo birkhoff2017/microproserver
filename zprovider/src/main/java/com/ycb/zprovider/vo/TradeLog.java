@@ -35,6 +35,36 @@ public class TradeLog {
     //收费策略
     private FeeStrategy feeStrategy;
 
+    //信用借还的订单号
+    private String orderNo;
+
+    public BigDecimal getUsefee() {
+        return usefee;
+    }
+
+    public void setUsefee(BigDecimal usefee) {
+        this.usefee = usefee;
+    }
+
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
+    }
+
+    public String getAlipayFundOrderNo() {
+        return alipayFundOrderNo;
+    }
+
+    public void setAlipayFundOrderNo(String alipayFundOrderNo) {
+        this.alipayFundOrderNo = alipayFundOrderNo;
+    }
+
+    //资金流水号，用于商户与支付宝进行对账
+    private String alipayFundOrderNo;
+
     public String getOrderid() {
         return orderid;
     }

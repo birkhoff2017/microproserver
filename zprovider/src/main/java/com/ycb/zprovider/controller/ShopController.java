@@ -26,8 +26,7 @@ public class ShopController {
 
     // 获取商铺列表
     @RequestMapping(value = "/getShopList", method = RequestMethod.POST)
-    // @Action --修改 为拦截器方式实现
-    public String query(@RequestParam("latitude") String latitude,
+    public String queryShopList(@RequestParam("latitude") String latitude,
                         @RequestParam("longitude") String longitude) {
         Map<String, Object> bacMap = new HashMap<>();
         try {
@@ -48,10 +47,9 @@ public class ShopController {
     }
 
 
-    // 获取商铺列表
+    // 获取商铺详情
     @RequestMapping(value = "/getShopInfo", method = RequestMethod.POST)
-    // @Action --修改 为拦截器方式实现
-    public String query(@RequestParam("shop_id") Long shopid) {
+    public String queryShopByShopID(@RequestParam("shop_id") Long shopid) {
         Map<String, Object> bacMap = new HashMap<>();
         try {
             ShopStation shop =  this.shopMapper.findShopInfo(shopid);

@@ -64,8 +64,25 @@ public class OauthNotifyController {
 
             //判断stationId是否为空 如果空 说明是用户中心里面的授权，不为空则是扫码租借时的授权
             if (StringUtils.isEmpty(stationId)){
+                Integer optlock = this.userMapper.findByOpenid(alipayUserId);
+                if (optlock == null) {
+                    User user = new User();
+                    user.setOpenid(alipayUserId);
+                    user.setDeposit(BigDecimal.ZERO);
+                    user.setRefund(BigDecimal.ZERO);
+                    user.setUsablemoney(BigDecimal.ZERO);
+                    user.setRefunded(BigDecimal.ZERO);
+                    user.setPlatform(1);//支付宝
+                    user.setCreatedBy("SYS:login");
+                    user.setCreatedDate(new Date());
+                    this.userMapper.insert(user);
+                }else {
+                    optlock++;
+                    this.userMapper.update(optlock, new Date(), alipayUserId);
+                }
                 //跳转到用户中心
-                response.sendRedirect("http://www.duxinyuan.top/userInfo.html?session=" + session);
+                response.sendRedirect("http://www.duxinyuan.top/user.html?session=" + session);
+
             }else {
                 Integer optlock = this.userMapper.findByOpenid(alipayUserId);
                 if (optlock == null) {

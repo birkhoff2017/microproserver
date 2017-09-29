@@ -49,7 +49,7 @@ public interface OrderMapper {
             @Result(property = "orderNo", column = "order_no"),
             @Result(property = "alipayFundOrderNo", column = "alipay_fund_order_no"),
             @Result(property = "duration", column = "duration"),
-            @Result(property = "feeStrategy", column = "fee_settings", one = @One(select = "FeeStrategyMapper.findFeeStrategy"))
+            @Result(property = "feeStrategy", column = "fee_settings", one = @One(select = "com.ycb.zprovider.mapper.FeeStrategyMapper.findFeeStrategy"))
     })
     List<TradeLog> findTradeLogs(Long customer);
 
