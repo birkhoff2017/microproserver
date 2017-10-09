@@ -102,4 +102,20 @@ public interface OrderMapper {
             "AND DATE(borrow_time)=(SELECT CURDATE()) " +
             "AND customer = #{id}")
     Integer findUserOrderNum(User user);
+
+    //根据订单编号查询某条订单的具体信息
+    @Select("SELECT * from ycb_mcs_tradelog WHERE orderid = #{orderid}")
+    @Results(value = {
+            @Result(property = "orderid", column = "orderid"),
+            @Result(property = "status", column = "status"),
+            @Result(property = "borrowName", column = "borrow_station_name"),
+            @Result(property = "borrowTime", column = "borrow_time"),
+            @Result(property = "returnName", column = "return_station_name"),
+            @Result(property = "returnTime", column = "return_time"),
+            @Result(property = "usefee", column = "usefee"),
+            @Result(property = "paid", column = "paid"),
+            @Result(property = "duration", column = "duration"),
+            @Result(property = "feeStrategyEntity", column = "fee_settings", one = @One(select = "com.ycb.wxxcx.provider.mapper.FeeStrategyMapper.findFeeStrategy"))
+    })
+    TradeLog findOrderByOrderId(@Param("orderid") String orderid);
 }
