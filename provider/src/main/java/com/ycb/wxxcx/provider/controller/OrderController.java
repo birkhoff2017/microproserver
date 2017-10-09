@@ -54,12 +54,12 @@ public class OrderController {
     public String querySingleOrder(@RequestParam("session") String session, @RequestParam("orderid") String orderid) {
         Map<String, Object> map = new HashMap<>();
         TradeLog tradeLog = this.orderMapper.findOrderByOrderId(orderid);
-        FeeStrategy feeStrategyEntity = tradeLog.getFeeStrategyEntity();
+        FeeStrategy feeStrategyEntity = tradeLog.getFeeStrategy();
         if (feeStrategyEntity == null) {
             feeStrategyEntity = feeStrategyMapper.findGlobalFeeStrategy();
-            tradeLog.setFeeStrategyEntity(feeStrategyEntity);
+            tradeLog.setFeeStrategy(feeStrategyEntity);
         }
-        tradeLog.setFeeStrategy(feeStrategyService.transFeeStrategy(feeStrategyEntity));
+        tradeLog.setFeeStr(feeStrategyService.transFeeStrategy(feeStrategyEntity));
         Map<String, Object> data = new HashMap<>();
         data.put("orders", tradeLog);
         map.put("data", data);
@@ -78,9 +78,8 @@ public class OrderController {
             User user = this.userMapper.findUserinfoByOpenid(openid);
             List<TradeLog> tradeLogList = this.orderMapper.findTradeLogs(user.getId());
             for (int i = 0; i < tradeLogList.size(); i++) {
-                tradeLogList.get(i).setFeeStrategy(feeStrategyService.transFeeStrategy(tradeLogList.get(i).getFeeStrategyEntity()));
-                tradeLogList.get(i).setUseFee(feeStrategyService.calUseFee(
-                        tradeLogList.get(i).getFeeStrategyEntity(),
+                tradeLogList.get(i).setFeeStr(feeStrategyService.transFeeStrategy(tradeLogList.get(i).getFeeStrategy()));
+                tradeLogList.get(i).setUseFee(feeStrategyService.calUseFee(tradeLogList.get(i).getFeeStrategy(),
                         tradeLogList.get(i).getDuration(),
                         tradeLogList.get(i).getStatus(),
                         tradeLogList.get(i).getUseFee()));
