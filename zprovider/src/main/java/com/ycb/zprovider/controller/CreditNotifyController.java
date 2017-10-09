@@ -71,7 +71,8 @@ public class CreditNotifyController {
         //验证签名是否成功
         boolean flag = false;
         try {
-            flag = AlipaySignature.rsaCheckV2(params, alipayPublicKey, charset, signType);
+            flag = AlipaySignature.rsaCheckV1(params, alipayPublicKey, charset, signType);
+
         } catch (AlipayApiException e) {
             e.printStackTrace();
         }
@@ -92,9 +93,9 @@ public class CreditNotifyController {
             //对于订单创建事件
             if ("ORDER_CREATE_NOTIFY".equals(notifyType)) {
                 //根据查询到的信息更新订单信息
-                updateOrder(order, outOrderNo);
+                updateOrder(order, orderNo);
                 //弹出电池
-                borrowBattery(outOrderNo, creditOrder, order);
+                //borrowBattery(outOrderNo, creditOrder, order);
             } else if ("ORDER_COMPLETE_NOTIFY".equals(notifyType)) {
                 //更新订单信息
                 updateComplateOrder(creditOrder, order);

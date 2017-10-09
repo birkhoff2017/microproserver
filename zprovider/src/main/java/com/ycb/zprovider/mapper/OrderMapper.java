@@ -93,7 +93,7 @@ public interface OrderMapper {
             "lastModifiedBy=#{lastModifiedBy}, " +
             "lastModifiedDate=#{lastModifiedDate}, " +
             "order_no=#{orderNo}, " +
-            "status=#{status}, " +
+            "status=#{status} " +
             "WHERE orderid=#{orderid}")
     void updateOrderStatusByOrderId(Order order);
 
