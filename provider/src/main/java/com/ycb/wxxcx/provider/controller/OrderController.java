@@ -1,10 +1,12 @@
 package com.ycb.wxxcx.provider.controller;
 
 import com.ycb.wxxcx.provider.cache.RedisService;
+import com.ycb.wxxcx.provider.mapper.FeeStrategyMapper;
 import com.ycb.wxxcx.provider.mapper.OrderMapper;
 import com.ycb.wxxcx.provider.mapper.UserMapper;
 import com.ycb.wxxcx.provider.service.FeeStrategyService;
 import com.ycb.wxxcx.provider.utils.JsonUtils;
+import com.ycb.wxxcx.provider.vo.FeeStrategy;
 import com.ycb.wxxcx.provider.vo.TradeLog;
 import com.ycb.wxxcx.provider.vo.User;
 import org.slf4j.Logger;
@@ -38,6 +40,34 @@ public class OrderController {
     @Autowired
     private OrderMapper orderMapper;
 
+    @Autowired
+    private FeeStrategyMapper feeStrategyMapper;
+
+    /**
+     * 获取某个订单的详细信息
+     *
+     * @param session 登录时返回的session
+     * @param orderid 订单编号
+     * @return 订单详情
+     */
+    @RequestMapping(value = "/getOrderInfo", method = RequestMethod.POST)
+    public String querySingleOrder(@RequestParam("session") String session, @RequestParam("orderid") String orderid) {
+        Map<String, Object> map = new HashMap<>();
+        TradeLog tradeLog = this.orderMapper.findOrderByOrderId(orderid);
+        FeeStrategy feeStrategyEntity = tradeLog.getFeeStrategyEntity();
+        if (feeStrategyEntity == null) {
+            feeStrategyEntity = feeStrategyMapper.findGlobalFeeStrategy();
+            tradeLog.setFeeStrategyEntity(feeStrategyEntity);
+        }
+        tradeLog.setFeeStrategy(feeStrategyService.transFeeStrategy(feeStrategyEntity));
+        Map<String, Object> data = new HashMap<>();
+        data.put("orders", tradeLog);
+        map.put("data", data);
+        map.put("code", 0);
+        map.put("msg", "成功");
+        return JsonUtils.writeValueAsString(map);
+    }
+
     // 获取用户的订单记录
     @RequestMapping(value = "/getOrderList", method = RequestMethod.POST)
     @ResponseBody
@@ -49,7 +79,8 @@ public class OrderController {
             List<TradeLog> tradeLogList = this.orderMapper.findTradeLogs(user.getId());
             for (int i = 0; i < tradeLogList.size(); i++) {
                 tradeLogList.get(i).setFeeStrategy(feeStrategyService.transFeeStrategy(tradeLogList.get(i).getFeeStrategyEntity()));
-                tradeLogList.get(i).setUseFee(feeStrategyService.calUseFee(tradeLogList.get(i).getFeeStrategyEntity(),
+                tradeLogList.get(i).setUseFee(feeStrategyService.calUseFee(
+                        tradeLogList.get(i).getFeeStrategyEntity(),
                         tradeLogList.get(i).getDuration(),
                         tradeLogList.get(i).getStatus(),
                         tradeLogList.get(i).getUseFee()));
