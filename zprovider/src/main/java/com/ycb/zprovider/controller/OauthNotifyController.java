@@ -96,6 +96,12 @@ public class OauthNotifyController {
                     user.setCreatedBy("SYS:login");
                     user.setCreatedDate(new Date());
                     this.userMapper.insert(user);
+
+                    //将sid存入Redis 关注事件发送消息时需要用到
+                    String userOrSid = MD5.getMessageDigest(("SIDBY_" + alipayUserId).getBytes());
+                    // 设置userOrSid过期
+                    redisService.setKeyValueTimeout(userOrSid, stationId, 300);
+
                     //让用户关注
                     String url = "http://p.alipay.com/P/RuMIvyjz";
                     response.sendRedirect(url);

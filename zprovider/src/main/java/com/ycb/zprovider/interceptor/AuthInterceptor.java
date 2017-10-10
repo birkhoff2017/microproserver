@@ -30,6 +30,7 @@ public class AuthInterceptor extends WebMvcConfigurerAdapter {
                 .addPathPatterns("/user/userInfo")
                 .excludePathPatterns("/user/login")
                 .excludePathPatterns("/shop/getShopList")
+                .excludePathPatterns("/gateway/notify")
                 .excludePathPatterns("/shop/getShopInfo");
         // super.addInterceptors(registry);
     }
