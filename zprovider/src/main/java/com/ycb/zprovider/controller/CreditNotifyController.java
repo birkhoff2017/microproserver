@@ -176,7 +176,7 @@ public class CreditNotifyController {
                 //根据查询到的信息更新订单信息
                 updateOrder(order, orderNo);
                 //弹出电池
-                //borrowBattery(outOrderNo, creditOrder, order);
+                borrowBattery(order);
             } else if ("ORDER_COMPLETE_NOTIFY".equals(notifyType)) {
                 //更新订单信息
                 updateComplateOrder(creditOrder, order);
@@ -189,13 +189,13 @@ public class CreditNotifyController {
     }
 
     //弹出电池
-    private void borrowBattery(String outOrderNo, CreditOrder creditOrder, Order order) throws IOException {
+    private void borrowBattery(Order order) throws IOException {
         //从订单中获取设备的sid和cabletype
         String sid = order.getBorrowStationId().toString();
         String cableType = order.getCable().toString();
         //获取设备的mac，在弹出电池时会使用
         String mac = stationMapper.getStationMac(Long.valueOf(sid));
-        socketService.SendCmd("ACT:borrow_battery;EVENT_CODE:1;STATIONID:" + sid + ";MAC:" + mac + ";ORDERID:" + outOrderNo + ";COLORID:7;CABLE:" + cableType + ";\r\n");
+        socketService.SendCmd("ACT:borrow_battery;EVENT_CODE:1;STATIONID:" + sid + ";MAC:" + mac + ";ORDERID:" + order.getOrderid() + ";COLORID:7;CABLE:" + cableType + ";\r\n");
     }
 
     /*

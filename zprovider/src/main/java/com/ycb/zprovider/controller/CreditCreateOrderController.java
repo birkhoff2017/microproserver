@@ -36,7 +36,7 @@ import java.util.Random;
 public class CreditCreateOrderController {
     public static final Logger logger = LoggerFactory.getLogger(CreditCreateOrderController.class);
 
-    //#最长可借用时间，超时后视为逾期订单，单位：天
+    //最长可借用时间，超时后视为逾期订单，单位：天
     @Value("${MAX_CAN_BORROW_TIME}")
     private Integer maxCanBorrowTime;
     @Autowired
@@ -83,10 +83,7 @@ public class CreditCreateOrderController {
         /*
         租金单位，租金+租金单位组合才具备实际的租金意义。
         取值定义如下：
-        DAY_YUAN:元/天
         HOUR_YUAN:元/小时
-        YUAN:元
-        YUAN_ONCE: 元/次
          */
         String rentUnit = "HOUR_YUAN";
         /*
@@ -130,8 +127,6 @@ public class CreditCreateOrderController {
         //下面的代码用于处理到期时间
         //用开始租借的时间加上最长时长
         long l = borrowDate.getTime() + maxCanBorrowTime * 24 * 60 * 60 * 1000;
-        //示例：2017-04-30 12:06:31
-        //     2017-09-11 13:09:23
         //到期时间，是指最晚归还时间，表示借用用户如果超过此时间还未完结订单（未归还物品或者未支付租金）将会进入逾期状态，
         // 芝麻会给借用用户发送催收提醒。如果此时间不传入或传空，将视为无限期借用
         String expiryTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(l));
@@ -161,24 +156,24 @@ public class CreditCreateOrderController {
         try {
             response = alipayClient.pageExecute(request, "GET"); // 这里一定要用GET模式
         } catch (AlipayApiException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
         //返回的map
-        Map<String,String> returnMap = new LinkedHashMap<>();
-        if (response.isSuccess()) {
+        Map<String, String> returnMap = new LinkedHashMap<>();
+        if (null != response && response.isSuccess()) {
             System.out.println("调用成功，信用借还订单创建成功");
             String url = response.getBody(); // 从body中获取url
             System.out.println("generateRentUrl url:" + url);
-            returnMap.put("msg","success");
-            returnMap.put("url",url);
+            returnMap.put("msg", "success");
+            returnMap.put("url", url);
             return JsonUtils.writeValueAsString(returnMap);
         } else {
-            returnMap.put("msg","fail");
-            System.out.println("调用失败");
-            logger.error("调用创建信用借还订单失败，错误代码：" + response.getCode() + "错误信息：" + response.getMsg() +
-                    "错误子代码" + response.getSubCode() + "错误子信息：" + response.getSubMsg());
+            returnMap.put("msg", "fail");
+            if (response != null) {
+                logger.error("调用创建信用借还订单失败，错误代码：" + response.getCode() + "错误信息：" + response.getMsg() +
+                        "错误子代码" + response.getSubCode() + "错误子信息：" + response.getSubMsg());
+            }
         }
         return null;
     }
-
 }
