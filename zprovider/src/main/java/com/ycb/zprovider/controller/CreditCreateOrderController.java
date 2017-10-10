@@ -7,10 +7,8 @@ import com.alipay.api.response.ZhimaMerchantOrderRentCreateResponse;
 import com.ycb.zprovider.constant.GlobalConfig;
 import com.ycb.zprovider.mapper.ShopMapper;
 import com.ycb.zprovider.service.AlipayOrderService;
-import com.ycb.zprovider.service.FeeStrategyService;
 import com.ycb.zprovider.utils.JsonUtils;
 import com.ycb.zprovider.vo.AlipayClientFactory;
-import com.ycb.zprovider.vo.FeeStrategy;
 import com.ycb.zprovider.vo.Shop;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -154,6 +152,7 @@ public class CreditCreateOrderController {
             String url = response.getBody(); // 从body中获取url
             returnMap.put("msg", "success");
             returnMap.put("url", url);
+            logger.info("创建信用借还订单成功" + response.getBody());
             return JsonUtils.writeValueAsString(returnMap);
         } else {
             returnMap.put("msg", "fail");

@@ -76,134 +76,129 @@ public class CreditNotifyController {
     @RequestMapping(value = "/notify", method = {RequestMethod.POST})
     public void notify(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        request.setCharacterEncoding("UTF-8");
         Map<String, String> params = RequestUtil.getRequestParams(request);
 
-        //签名验证
-        boolean flag = false;
-        try {
-            flag = AlipaySignature.rsaCheckV1(params, alipayPublicKey, charset, signType);
-        } catch (AlipayApiException e) {
-            e.printStackTrace();
-        }finally {
-            String responseMsg = "";
-            //获取内容信息
-            String bizContent = params.get("biz_content");
-            if (!StringUtils.isEmpty(bizContent)) {
-                //将XML转化成json对象
-                JSONObject bizContentJson = (JSONObject) new XMLSerializer().read(bizContent);
-                // 1. 获取事件类型
-                String eventType = bizContentJson.getString("EventType");
-                // 服务窗关注事件
-                if (eventType.equals("follow")) {
-                    JSONObject actionParam = JSONObject.fromObject(bizContentJson.getString("ActionParam"));
-                    JSONObject scene = JSONObject.fromObject(actionParam.get("scene"));
-                    String sceneId = scene.getString("sceneId");
-                    System.out.println("sceneId:" + sceneId);
-                    //取得发起请求的支付宝账号id
-                    String userId = bizContentJson.getString("FromUserId");
+        String responseMsg = "";
+        //获取内容信息
+        String bizContent = params.get("biz_content");
+        if (!StringUtils.isEmpty(bizContent)) {
+            //将XML转化成json对象
+            JSONObject bizContentJson = (JSONObject) new XMLSerializer().read(bizContent);
+            // 1. 获取事件类型
+            String eventType = bizContentJson.getString("EventType");
+            // 服务窗关注事件
+            if (eventType.equals("follow")) {
+                JSONObject actionParam = JSONObject.fromObject(bizContentJson.getString("ActionParam"));
+                JSONObject scene = JSONObject.fromObject(actionParam.get("scene"));
+                String sceneId = scene.getString("sceneId");
+                System.out.println("sceneId:" + sceneId);
+                //取得发起请求的支付宝账号id
+                String userId = bizContentJson.getString("FromUserId");
+                //同步构建ACK响应
+                responseMsg = this.buildBaseAckMsg(userId);
+                //异步发送消息，根据不同的sceneId推送不同的消息
+                if ("scene_p_1505704951554".equals(sceneId)) {
+                    //取出该用户扫码时的sid
+                    String userOrSid = MD5.getMessageDigest(("SIDBY_" + userId).getBytes());
+                    String sid = redisService.getKeyValue(userOrSid);
+                    // session
+                    String session = MD5.getMessageDigest(userId.getBytes());
+                    Long pastDate = new Date().getTime();//获取当前时间用来前台验证失效
+                    //发消息
+                    AlipayClient alipayClient = alipayClientFactory.newInstance();
+                    AlipayOpenPublicMessageCustomSendRequest req = new AlipayOpenPublicMessageCustomSendRequest();
+                    //发消息
+                    Map<String, Object> map = new HashMap<String, Object>();
+                    List<Map> articleList = new ArrayList<Map>();
+                    Map<String, String> map1 = new HashMap<String, String>();
+                    map1.put("action_name", "立即查看");
+                    map1.put("desc", "图文内容");
+                    map1.put("image_url", "https://oalipay-dl-django.alicdn.com/rest/1.0/image?fileIds=LQ8WWI46Qde4YXipYdMEngAAACMAAQED&zoom=original");
+                    map1.put("title", "点击租借");
+                    map1.put("url", "http://www.duxinyuan.top/borrow.html?sid=" + sid + "&session=" + session + "&pastDate=" + pastDate);
+                    Map<String, String> map2 = new HashMap<String, String>();
+                    map2.put("action_name", "立即查看");
+                    map2.put("desc", "图文内容");
+                    map2.put("image_url", "https://oalipay-dl-django.alicdn.com/rest/1.0/image?fileIds=4cdPw6zgRP6dPs6RYorWDAAAACMAAQED&zoom=original");
+                    map2.put("title", "点我点我 | 租借充电宝");
+                    map2.put("url", "http://www.duxinyuan.top/borrow.html?sid=" + sid + "&session=" + session + "&pastDate=" + pastDate);
+                    articleList.add(map1);
+                    articleList.add(map2);
 
-                    //1. 首先同步构建ACK响应
-                    responseMsg = this.buildBaseAckMsg(userId);
+                    map.put("to_user_id", userId);
+                    map.put("msg_type", "image-text");
+                    map.put("articles", articleList);
+                    //发送内容
+                    req.setBizContent(JsonUtils.writeValueAsString(map));
+                    AlipayOpenPublicMessageCustomSendResponse res = null;
+                    try {
+                        res = alipayClient.execute(req);
+                    } catch (AlipayApiException e) {
+                        e.printStackTrace();
+                    }
+                    if (res.isSuccess()) {
+                        System.out.println("图文消息发送成功" + res.getBody());
+                    } else {
+                        System.out.println("图文消息发送失败" + res.getBody());
+                    }
+                    //响应结果加签及返回
+                    try {
+                        responseMsg = encryptAndSign(responseMsg,
+                                alipayPublicKey,
+                                privateKey, charset,
+                                false, true, signType);
 
-                    //2. 异步发送消息，根据不同的sceneId推送不同的消息
-                    if("scene_p_1505704951554".equals(sceneId)){
+                        //http 内容应答
+                        response.reset();
+                        response.setContentType("text/xml;charset=GBK");
+                        PrintWriter printWriter = response.getWriter();
+                        printWriter.print(responseMsg);
+                        response.flushBuffer();
 
-                        //取出该用户扫码时的sid
-                        String userOrSid = MD5.getMessageDigest(("SIDBY_" + userId).getBytes());
-                        String  sid = redisService.getKeyValue(userOrSid);
-
-                        // session
-                        String session = MD5.getMessageDigest(userId.getBytes());
-
-                        //发消息
-                        AlipayClient alipayClient = alipayClientFactory.newInstance();
-                        AlipayOpenPublicMessageCustomSendRequest req = new AlipayOpenPublicMessageCustomSendRequest();
-                        //发消息
-                        Map<String,Object> map = new HashMap<String,Object>();
-                        List<Map> articleList = new ArrayList<Map>();
-                        Map<String,String> map1 = new HashMap<String,String>();
-                        map1.put("action_name","立即查看");
-                        map1.put("desc","图文内容");
-                        map1.put("image_url","https://oalipay-dl-django.alicdn.com/rest/1.0/image?fileIds=LQ8WWI46Qde4YXipYdMEngAAACMAAQED&zoom=original");
-                        map1.put("title","点击租借");
-                        map1.put("url","http://www.duxinyuan.top/borrow.html?sid=" + sid + "&session=" + session);
-                        Map<String,String> map2 = new HashMap<String,String>();
-                        map2.put("action_name","立即查看");
-                        map2.put("desc","图文内容");
-                        map2.put("image_url","https://oalipay-dl-django.alicdn.com/rest/1.0/image?fileIds=4cdPw6zgRP6dPs6RYorWDAAAACMAAQED&zoom=original");
-                        map2.put("title","点我点我 | 租借充电宝");
-                        map2.put("url","http://www.duxinyuan.top/borrow.html?sid=" + sid + "&session=" + session);
-                        articleList.add(map1);
-                        articleList.add(map2);
-
-                        map.put("to_user_id",userId);
-                        map.put("msg_type","image-text");
-                        map.put("articles",articleList);
-                        //发送内容
-                        req.setBizContent(JsonUtils.writeValueAsString(map));
-
-                        AlipayOpenPublicMessageCustomSendResponse res = null;
-                        try {
-                            res = alipayClient.execute(req);
-                        } catch (AlipayApiException e) {
-                            e.printStackTrace();
-                        }
-                        if(res.isSuccess()){
-                            System.out.println("调用成功");
-                        } else {
-                            System.out.println("调用失败");
-                        }
-                        //5. 响应结果加签及返回
-                        try {
-                            responseMsg = encryptAndSign(responseMsg,
-                                    alipayPublicKey,
-                                    privateKey,charset,
-                                    false, true, signType);
-
-                            //http 内容应答
-                            response.reset();
-                            response.setContentType("text/xml;charset=GBK");
-                            PrintWriter printWriter = response.getWriter();
-                            printWriter.print(responseMsg);
-                            response.flushBuffer();
-
-                        }catch (AlipayApiException alipayApiException) {
-                            alipayApiException.printStackTrace();
-                        }
+                    } catch (AlipayApiException alipayApiException) {
+                        alipayApiException.printStackTrace();
                     }
                 }
             }
-        }
-
-        //当验证签名成功的时候
-        if (flag) {
-            //notify_type	取值范围：
-            //ORDER_CREATE_NOTIFY (订单创建异步事件)
-            //ORDER_COMPLETE_NOTIFY (订单完结异步事件)
-            String notifyType = params.get("notify_type");
-            //信用借还平台订单号 芝麻信用借还平台生成的订单号
-            String orderNo = params.get("order_no");
-            //外部商户订单号 外部商户生成的订单号，与芝麻信用借还平台生成的订单号存在关联关系
-            String outOrderNo = params.get("out_order_no");
-            //根据外部订单号查询订单信息
-            CreditOrder creditOrder = creditQueryOrderService.queryOrderByOutOrderNo(outOrderNo);
-            //查询数据库中订单的信息
-            Order order = orderMapper.findOrderByOrderId(outOrderNo);
-            //对于订单创建事件
-            if ("ORDER_CREATE_NOTIFY".equals(notifyType)) {
-                //根据查询到的信息更新订单信息
-                updateOrder(order, orderNo);
-                //弹出电池
-                //borrowBattery(order);
-            } else if ("ORDER_COMPLETE_NOTIFY".equals(notifyType)) {
-                //更新订单信息
-                updateComplateOrder(creditOrder, order);
-            }
-            //返回 success
-            printResponse(response, "success");
         } else {
-            printResponse(response, "error");
+
+            //签名验证
+            boolean flag = false;
+            try {
+                flag = AlipaySignature.rsaCheckV1(params, alipayPublicKey, charset, signType);
+            } catch (AlipayApiException e) {
+                e.printStackTrace();
+            }
+
+            //当验证签名成功的时候
+            if (flag) {
+                //notify_type	取值范围：
+                //ORDER_CREATE_NOTIFY (订单创建异步事件)
+                //ORDER_COMPLETE_NOTIFY (订单完结异步事件)
+                String notifyType = params.get("notify_type");
+                //信用借还平台订单号 芝麻信用借还平台生成的订单号
+                String orderNo = params.get("order_no");
+                //外部商户订单号 外部商户生成的订单号，与芝麻信用借还平台生成的订单号存在关联关系
+                String outOrderNo = params.get("out_order_no");
+                //根据外部订单号查询订单信息
+                CreditOrder creditOrder = creditQueryOrderService.queryOrderByOutOrderNo(outOrderNo);
+                //查询数据库中订单的信息
+                Order order = orderMapper.findOrderByOrderId(outOrderNo);
+                //对于订单创建事件
+                if ("ORDER_CREATE_NOTIFY".equals(notifyType)) {
+                    //根据查询到的信息更新订单信息
+                    updateOrder(order, orderNo);
+                    //弹出电池
+                    //borrowBattery(order);
+                } else if ("ORDER_COMPLETE_NOTIFY".equals(notifyType)) {
+                    //更新订单信息
+                    updateComplateOrder(creditOrder, order);
+                }
+                //返回 success
+                printResponse(response, "success");
+            } else {
+                printResponse(response, "error");
+            }
         }
     }
 
