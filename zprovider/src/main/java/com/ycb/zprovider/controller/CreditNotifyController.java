@@ -1,19 +1,26 @@
 package com.ycb.zprovider.controller;
 
 import com.alipay.api.AlipayApiException;
+import com.alipay.api.AlipayClient;
 import com.alipay.api.internal.util.AlipaySignature;
+import com.alipay.api.request.AlipayOpenPublicMessageCustomSendRequest;
+import com.alipay.api.response.AlipayOpenPublicMessageCustomSendResponse;
 import com.ycb.zprovider.mapper.OrderMapper;
 import com.ycb.zprovider.mapper.StationMapper;
 import com.ycb.zprovider.service.CreditQueryOrderService;
 import com.ycb.zprovider.service.SocketService;
 import com.ycb.zprovider.utils.RequestUtil;
+import com.ycb.zprovider.vo.AlipayClientFactory;
 import com.ycb.zprovider.vo.CreditOrder;
 import com.ycb.zprovider.vo.Order;
+import net.sf.json.JSONObject;
+import net.sf.json.xml.XMLSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -21,8 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Huo on 2017/9/26.
@@ -35,25 +41,25 @@ public class CreditNotifyController {
 
     public static final Logger logger = LoggerFactory.getLogger(CreditNotifyController.class);
 
-    //初始化alipayClient用到的参数:字符编码-传递给支付宝的数据编码
     @Value("${CHARSET}")
     private String charset;
-    //初始化alipayClient用到的参数:该公钥为测试账号公钥,开发者必须设置自己的公钥 ,否则会存在安全隐患
+    @Value("${PRIVATE_KEY}")
+    private String privateKey;
     @Value("${ALIPAY_PUBLIC_KEY}")
     private String alipayPublicKey;
-    //初始化alipayClient用到的参数:签名类型
     @Value("${SIGN_TYPE}")
     private String signType;
+    @Value("${APPID}")
+    private String appId;
     @Autowired
     private OrderMapper orderMapper;
     @Autowired
     private StationMapper stationMapper;
     @Autowired
     private SocketService socketService;
+    @Autowired
+    private AlipayClientFactory alipayClientFactory;
 
-    /**
-     * 注意，这里自动注入不了，为了测试已经将CreditQueryOrderService上的注解改为了controller，实际使用时需要改回来
-     */
     @Autowired
     private CreditQueryOrderService creditQueryOrderService;
 
@@ -66,16 +72,91 @@ public class CreditNotifyController {
 
         Map<String, String> params = RequestUtil.getRequestParams(request);
 
-        //1、签名验证
-        //验证
-        //验证签名是否成功
+        //签名验证
         boolean flag = false;
         try {
             flag = AlipaySignature.rsaCheckV1(params, alipayPublicKey, charset, signType);
-
         } catch (AlipayApiException e) {
             e.printStackTrace();
+        }finally {
+            String responseMsg = "";
+            //获取内容信息
+            String bizContent = params.get("biz_content");
+            if (!StringUtils.isEmpty(bizContent)) {
+                //将XML转化成json对象
+                JSONObject bizContentJson = (JSONObject) new XMLSerializer().read(bizContent);
+                // 1. 获取事件类型
+                String eventType = bizContentJson.getString("EventType");
+                // 服务窗关注事件
+                if (eventType.equals("follow")) {
+                    JSONObject actionParam = JSONObject.fromObject(bizContentJson.getString("ActionParam"));
+                    JSONObject scene = JSONObject.fromObject(actionParam.get("scene"));
+                    String sceneId = scene.getString("sceneId");
+                    System.out.println("sceneId:" + sceneId);
+                    //取得发起请求的支付宝账号id
+                    String fromUserId = bizContentJson.getString("FromUserId");
+
+                    //1. 首先同步构建ACK响应
+                    responseMsg = this.buildBaseAckMsg(fromUserId);
+
+                    //2. 异步发送消息，根据不同的sceneId推送不同的消息（这里的sceneId的意义由商户自己定义）
+                    if("scene_p_1505704951554".equals(sceneId)){
+                        //发消息
+                        AlipayClient alipayClient = alipayClientFactory.newInstance();
+                        AlipayOpenPublicMessageCustomSendRequest req = new AlipayOpenPublicMessageCustomSendRequest();
+                        req.setBizContent("");//---
+                        Map<String,Object> map = new HashMap<String,Object>();
+                        map.put("to_user_id",fromUserId);
+                        map.put("msg_type","image-text");
+                        List<Map> articleList = new ArrayList<Map>();
+                        Map<String,String> map1 = new HashMap<String,String>();
+                        map1.put("action_name","立即查看");
+                        map1.put("desc","图文内容");
+                        map1.put("image_url","http: //example.com/abc.jpg");
+                        map1.put("title","标题");
+                        map1.put("url","");
+                        Map<String,String> map2 = new HashMap<String,String>();
+                        map2.put("action_name","立即查看");
+                        map2.put("desc","图文内容");
+                        map2.put("image_url","http: //example.com/abc.jpg");
+                        map2.put("title","标题");
+                        map2.put("url","");
+                        articleList.add(map1);
+                        articleList.add(map2);
+
+                        AlipayOpenPublicMessageCustomSendResponse res = null;
+                        try {
+                            res = alipayClient.execute(req);
+                        } catch (AlipayApiException e) {
+                            e.printStackTrace();
+                        }
+                        if(res.isSuccess()){
+                            System.out.println("调用成功");
+                        } else {
+                            System.out.println("调用失败");
+                        }
+                        //5. 响应结果加签及返回
+                        try {
+                            responseMsg = encryptAndSign(responseMsg,
+                                    alipayPublicKey,
+                                    privateKey,charset,
+                                    false, true, signType);
+
+                            //http 内容应答
+                            response.reset();
+                            response.setContentType("text/xml;charset=GBK");
+                            PrintWriter printWriter = response.getWriter();
+                            printWriter.print(responseMsg);
+                            response.flushBuffer();
+
+                        }catch (AlipayApiException alipayApiException) {
+                            alipayApiException.printStackTrace();
+                        }
+                    }
+                }
+            }
         }
+
         //当验证签名成功的时候
         if (flag) {
             //notify_type	取值范围：
@@ -159,4 +240,56 @@ public class CreditNotifyController {
             }
         }
     }
+
+    /**
+     * 构造基础的响应消息
+     *
+     * @return
+     */
+    public String buildBaseAckMsg(String fromUserId) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<XML>");
+        sb.append("<ToUserId><![CDATA[" + fromUserId + "]]></ToUserId>");
+        sb.append("<AppId><![CDATA[" + appId + "]]></AppId>");
+        sb.append("<CreateTime>" + Calendar.getInstance().getTimeInMillis() + "</CreateTime>");
+        sb.append("<MsgType><![CDATA[ack]]></MsgType>");
+        sb.append("</XML>");
+        return sb.toString();
+    }
+
+    public static String encryptAndSign(String bizContent, String alipayPublicKey, String cusPrivateKey, String charset,
+                                        boolean isEncrypt, boolean isSign, String signType) throws AlipayApiException {
+        StringBuilder sb = new StringBuilder();
+        if (com.alipay.api.internal.util.StringUtils.isEmpty(charset)) {
+            charset = "GBK";
+        }
+        sb.append("<?xml version=\"1.0\" encoding=\"" + charset + "\"?>");
+        if (isEncrypt) {// 加密
+            sb.append("<alipay>");
+            String encrypted = AlipaySignature.rsaEncrypt(bizContent, alipayPublicKey, charset);
+            sb.append("<response>" + encrypted + "</response>");
+            sb.append("<encryption_type>AES</encryption_type>");
+            if (isSign) {
+                String sign = AlipaySignature.rsaSign(encrypted, cusPrivateKey, charset, signType);
+                sb.append("<sign>" + sign + "</sign>");
+                sb.append("<sign_type>");
+                sb.append(signType);
+                sb.append("</sign_type>");
+            }
+            sb.append("</alipay>");
+        } else if (isSign) {// 不加密，但需要签名
+            sb.append("<alipay>");
+            sb.append("<response>" + bizContent + "</response>");
+            String sign = AlipaySignature.rsaSign(bizContent, cusPrivateKey, charset, signType);
+            sb.append("<sign>" + sign + "</sign>");
+            sb.append("<sign_type>");
+            sb.append(signType);
+            sb.append("</sign_type>");
+            sb.append("</alipay>");
+        } else {// 不加密，不加签
+            sb.append(bizContent);
+        }
+        return sb.toString();
+    }
+
 }

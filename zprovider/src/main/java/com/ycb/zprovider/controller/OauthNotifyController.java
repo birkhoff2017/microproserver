@@ -97,7 +97,7 @@ public class OauthNotifyController {
                     user.setCreatedDate(new Date());
                     this.userMapper.insert(user);
                     //让用户关注
-                    String url = "http://p.alipay.com/I/yNIJZnFf";
+                    String url = "http://p.alipay.com/P/RuMIvyjz";
                     response.sendRedirect(url);
 
                 }else {

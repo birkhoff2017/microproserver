@@ -88,7 +88,7 @@ public class CreditCreateOrderController {
         YUAN:元
         YUAN_ONCE: 元/次
          */
-        String rentUnit = "DAY_YUAN";
+        String rentUnit = "HOUR_YUAN";
         /*
         租金，租金+租金单位组合才具备实际的租金意义。
         >0.00元，代表有租金
@@ -98,7 +98,7 @@ public class CreditCreateOrderController {
         //这里还需要商议
 //        FeeStrategy feeStrategy = feeStrategyService.findFeeStrategyByStation(Long.valueOf(sid));
 //        String rentAmount = feeStrategy.getFixed().toString();
-        String rentAmount = "0.10";
+        String rentAmount = "1";
         /*
         押金，金额单位：元。
         注：不允许免押金的用户按此金额支付押金；当物品丢失时，赔偿金额不得高于该金额。
@@ -126,7 +126,7 @@ public class CreditCreateOrderController {
 
         //商户订单创建的起始借用时间，格式：YYYY-MM-DD HH:MM:SS。如果不传入或者为空，则认为订单创建起始时间为调用此接口时的时间。
         Date borrowDate = new Date();
-        String borrowTime = new SimpleDateFormat("YYYY-MM-dd HH:MM:ss").format(borrowDate);
+        String borrowTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(borrowDate);
         //下面的代码用于处理到期时间
         //用开始租借的时间加上最长时长
         long l = borrowDate.getTime() + maxCanBorrowTime * 24 * 60 * 60 * 1000;
@@ -134,7 +134,7 @@ public class CreditCreateOrderController {
         //     2017-09-11 13:09:23
         //到期时间，是指最晚归还时间，表示借用用户如果超过此时间还未完结订单（未归还物品或者未支付租金）将会进入逾期状态，
         // 芝麻会给借用用户发送催收提醒。如果此时间不传入或传空，将视为无限期借用
-        String expiryTime = new SimpleDateFormat("YYYY-MM-dd HH:MM:ss").format(new Date(l));
+        String expiryTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(l));
 
         //创建一个未支付订单
         alipayOrderService.createPreOrder(outOrderNo, sid, cableType, session);
