@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -28,10 +27,8 @@ public class CreditQueryOrderService {
     @Autowired
     private AlipayClientFactory alipayClientFactory;
 
-    @RequestMapping(value = "/queryOrder", method = RequestMethod.POST)
-    @ResponseBody
     //outOrderNo 外部订单号，需要唯一，由商户传入，芝麻内部会做幂等控制，格式为：yyyyMMddHHmmss+随机数	2016100100000xxxx
-    public CreditOrder queryOrderByOutOrderNo(@RequestParam("outOrderNo") String outOrderNo) {
+    public CreditOrder queryOrderByOutOrderNo(String outOrderNo) {
         CreditOrder creditOrder = new CreditOrder();
         AlipayClient alipayClient = alipayClientFactory.newInstance();
         ZhimaMerchantOrderRentQueryRequest request = new ZhimaMerchantOrderRentQueryRequest();
@@ -71,5 +68,4 @@ public class CreditQueryOrderService {
         }
         return null;
     }
-
 }
