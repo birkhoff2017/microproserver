@@ -5,13 +5,12 @@ import com.alipay.api.AlipayClient;
 import com.alipay.api.request.ZhimaMerchantOrderRentCreateRequest;
 import com.alipay.api.response.ZhimaMerchantOrderRentCreateResponse;
 import com.ycb.zprovider.constant.GlobalConfig;
-import com.ycb.zprovider.mapper.OrderMapper;
 import com.ycb.zprovider.mapper.ShopMapper;
-import com.ycb.zprovider.mapper.StationMapper;
 import com.ycb.zprovider.service.AlipayOrderService;
-import com.ycb.zprovider.service.SocketService;
+import com.ycb.zprovider.service.FeeStrategyService;
 import com.ycb.zprovider.utils.JsonUtils;
 import com.ycb.zprovider.vo.AlipayClientFactory;
+import com.ycb.zprovider.vo.FeeStrategy;
 import com.ycb.zprovider.vo.Shop;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,15 +40,10 @@ public class CreditCreateOrderController {
     private Integer maxCanBorrowTime;
     @Autowired
     private ShopMapper shopMapper;
-    @Autowired
-    private OrderMapper orderMapper;
-    @Autowired
-    private StationMapper stationMapper;
-    @Autowired
-    private SocketService socketService;
 
     @Autowired
     private AlipayClientFactory alipayClientFactory;
+
     @Autowired
     private AlipayOrderService alipayOrderService;
 
@@ -61,8 +55,6 @@ public class CreditCreateOrderController {
 
         AlipayClient alipayClient = alipayClientFactory.newInstance();
         ZhimaMerchantOrderRentCreateRequest request = new ZhimaMerchantOrderRentCreateRequest();
-        //回调到商户的url地址
-        //商户在组装订单创建https请求时，会附带invoke_return_url参数，当用户完成借用准入及资金处理后，
         // 在借用完成页面会自动回调到商户提供的invoke_return_url地址链接，目前商户链接跳转是通过自动跳转的方式实现。
         String invokeReturnUrl = "http://www.duxinyuan.top/loading.html";
         //下面的代码用来生成外部订单号，就是商户自己的订单号
@@ -72,7 +64,7 @@ public class CreditCreateOrderController {
         for (int i = 0; i < 4; i++) {
             sb.append(random.nextInt(10));
         }
-        //外部订单号，需要唯一，由商户传入，芝麻内部会做幂等控制，格式为：yyyyMMddHHmmss+随机数  示例："2016100100000xxxx\"
+        //外部订单号，需要唯一，由商户传入，芝麻内部会做幂等控制，格式为：yyyyMMddHHmmss+随机数
         String outOrderNo = date + sb.toString();
         //信用借还的产品码，传入固定值：w1010100000000002858
         String productCode = GlobalConfig.Z_PRODUCT_CODE;
@@ -95,10 +87,9 @@ public class CreditCreateOrderController {
         //这里还需要商议
 //        FeeStrategy feeStrategy = feeStrategyService.findFeeStrategyByStation(Long.valueOf(sid));
 //        String rentAmount = feeStrategy.getFixed().toString();
-        String rentAmount = "0.10";
+        String rentAmount = "1";
         /*
         押金，金额单位：元。
-        注：不允许免押金的用户按此金额支付押金；当物品丢失时，赔偿金额不得高于该金额。
          */
         //根据设备的sid查询店铺信息
         Shop shopInfo = shopMapper.getShopInfoBySid(sid);
@@ -108,7 +99,6 @@ public class CreditCreateOrderController {
         是否支持当借用用户信用不够（不准入）时，可让用户支付押金借用:
         Y:支持
         N:不支持
-        注：支付押金的金额等同于deposit_amount
          */
         String depositState = "Y";
 
@@ -161,9 +151,7 @@ public class CreditCreateOrderController {
         //返回的map
         Map<String, String> returnMap = new LinkedHashMap<>();
         if (null != response && response.isSuccess()) {
-            System.out.println("调用成功，信用借还订单创建成功");
             String url = response.getBody(); // 从body中获取url
-            System.out.println("generateRentUrl url:" + url);
             returnMap.put("msg", "success");
             returnMap.put("url", url);
             return JsonUtils.writeValueAsString(returnMap);
