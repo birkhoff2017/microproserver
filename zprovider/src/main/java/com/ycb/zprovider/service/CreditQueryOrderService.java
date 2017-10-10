@@ -11,6 +11,7 @@ import com.ycb.zprovider.vo.CreditOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedHashMap;
@@ -19,9 +20,7 @@ import java.util.Map;
 /**
  * Created by Huo on 2017/9/11.
  */
-@RestController
-@RequestMapping("queryOrder")
-//@Service
+@Service
 public class CreditQueryOrderService {
 
     public static final Logger logger = LoggerFactory.getLogger(CreditQueryOrderService.class);
@@ -50,7 +49,7 @@ public class CreditQueryOrderService {
         } catch (AlipayApiException e) {
             e.printStackTrace();
         }
-        if (response.isSuccess()) {
+        if (null != response && response.isSuccess()) {
             creditOrder.setAdmitState(response.getAdmitState());
             creditOrder.setAlipayFundOrderNo(response.getAlipayFundOrderNo());
             creditOrder.setBorrowTime(response.getBorrowTime());
@@ -65,8 +64,10 @@ public class CreditQueryOrderService {
             creditOrder.setUseState(response.getUseState());
             return creditOrder;
         } else {
-            logger.error("查询信用借还订单失败，错误代码：" + response.getCode() + "错误信息：" + response.getMsg() +
-                    "错误子代码" + response.getSubCode() + "错误子信息：" + response.getSubMsg());
+            if (response != null) {
+                logger.error("查询信用借还订单失败，错误代码：" + response.getCode() + "错误信息：" + response.getMsg() +
+                        "错误子代码" + response.getSubCode() + "错误子信息：" + response.getSubMsg());
+            }
         }
         return null;
     }
