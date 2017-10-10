@@ -154,14 +154,4 @@ public interface OrderMapper {
     )
     List<Order> findOverdueOrders(@Param("maxCanBorrowTime") Integer maxCanBorrowTime);
 
-
-    //根据信用借还订单的支付宝订单号来查询订单信息
-    @Select("SELECT orderid,customer from ycb_mcs_tradelog WHERE order_no = #{orderNo}")
-    @Results(value = {
-            @Result(property = "orderid", column = "orderid"),
-            @Result(property = "customer", column = "customer"),
-            @Result(property = "borrowStationId", column = "borrow_station_id"),
-            @Result(property = "cable", column = "cable"),
-    })
-    Order findOrderByOrderNo(String orderNo);
 }
