@@ -113,13 +113,13 @@ public class CreditCreateOrderController {
 
         //商户订单创建的起始借用时间，格式：YYYY-MM-DD HH:MM:SS。如果不传入或者为空，则认为订单创建起始时间为调用此接口时的时间。
         Date borrowDate = new Date();
-        String borrowTime = new SimpleDateFormat("YYYY-MM-dd HH:MM:ss").format(borrowDate);
+        String borrowTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(borrowDate);
         //下面的代码用于处理到期时间
         //用开始租借的时间加上最长时长
         long l = borrowDate.getTime() + maxCanBorrowTime * 24 * 60 * 60 * 1000;
         //到期时间，是指最晚归还时间，表示借用用户如果超过此时间还未完结订单（未归还物品或者未支付租金）将会进入逾期状态，
         // 芝麻会给借用用户发送催收提醒。如果此时间不传入或传空，将视为无限期借用
-        String expiryTime = new SimpleDateFormat("YYYY-MM-dd HH:MM:ss").format(new Date(l));
+        String expiryTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(l));
 
         //创建一个未支付订单
         alipayOrderService.createPreOrder(outOrderNo, sid, cableType, session);
