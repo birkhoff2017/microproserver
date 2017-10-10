@@ -47,7 +47,7 @@ public class OrderController {
             String openid = redisService.getKeyValue(session);
             User user = this.userMapper.findUserinfoByOpenid(openid);
             List<TradeLog> tradeLogList = this.orderMapper.findTradeLogs(user.getId());
-            if (null != tradeLogList && tradeLogList.size()!=0){
+            if (null != tradeLogList && tradeLogList.size() != 0) {
                 for (int i = 0; i < tradeLogList.size(); i++) {
                     tradeLogList.get(i).setFeeStr(feeStrategyService.transFeeStrategy(tradeLogList.get(i).getFeeStrategy()));
                     tradeLogList.get(i).setUseFee(feeStrategyService.calUseFee(tradeLogList.get(i).getFeeStrategy(),
@@ -56,13 +56,13 @@ public class OrderController {
                             tradeLogList.get(i).getUseFee()));
                 }
 
-                    Map<String, List> data = new HashMap<String, List>();
-                    data.put("orders", tradeLogList);
-                    bacMap.put("data", data);
-                    bacMap.put("code", 0);
-                    bacMap.put("msg", "成功");
+                Map<String, List> data = new HashMap<String, List>();
+                data.put("orders", tradeLogList);
+                bacMap.put("data", data);
+                bacMap.put("code", 0);
+                bacMap.put("msg", "成功");
 
-            }else {
+            } else {
                 bacMap.put("data", null);
                 bacMap.put("code", 1);
                 bacMap.put("msg", "用户暂无租借记录");

@@ -49,15 +49,10 @@ public class CreditOverdueOrders {
     //每隔fixedDelay（毫秒）执行一次
     @Scheduled(fixedRate = 2000000)
     public void dealWithOverdueUsers() {
-
-        AlipayClient alipayClient = alipayClientFactory.newInstance();
-        ZhimaMerchantOrderRentCompleteRequest request = new ZhimaMerchantOrderRentCompleteRequest();
-
         //查询出还没有归还的订单
-        List<Order> overdueOrders = orderMapper.findOverdueOrders(1);
+        List<Order> overdueOrders = orderMapper.findOverdueOrders(maxCanBorrowTime);
 
-        for (int i = 0; i < overdueOrders.size(); i++) {
-            Order order = overdueOrders.get(i);
+        for (Order order : overdueOrders) {
             //向支付宝发送完结订单的请求
             sendCompleteOverdueRequest(order);
         }
@@ -86,9 +81,6 @@ public class CreditOverdueOrders {
         //查询出设备押金,也就是用户需要支付的赔偿金
         String payAmount = shopInfo.getDefaultPay().toString();
 
-        //物品归还门店名称,可选
-        //String restoreShopName = "";
-
         AlipayClient alipayClient = alipayClientFactory.newInstance();
         ZhimaMerchantOrderRentCompleteRequest request = new ZhimaMerchantOrderRentCompleteRequest();
 
@@ -105,10 +97,11 @@ public class CreditOverdueOrders {
         } catch (AlipayApiException e) {
             e.printStackTrace();
         }
-        if (response.isSuccess()) {
-            System.out.println("调用成功,信用借还订单完结");
-        } else {
-            System.out.println("调用失败");
+        if (response == null || !response.isSuccess()) {
+            logger.error("订单号为：" + orderNo + "的逾期订单完结失败！/n");
+            if (response != null) {
+                logger.error(response.getMsg());
+            }
         }
     }
 }

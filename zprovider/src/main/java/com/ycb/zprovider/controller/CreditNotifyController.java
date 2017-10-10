@@ -51,9 +51,6 @@ public class CreditNotifyController {
     @Autowired
     private SocketService socketService;
 
-    /**
-     * 注意，这里自动注入不了，为了测试已经将CreditQueryOrderService上的注解改为了controller，实际使用时需要改回来
-     */
     @Autowired
     private CreditQueryOrderService creditQueryOrderService;
 
@@ -66,13 +63,10 @@ public class CreditNotifyController {
 
         Map<String, String> params = RequestUtil.getRequestParams(request);
 
-        //1、签名验证
-        //验证
-        //验证签名是否成功
+        //签名验证
         boolean flag = false;
         try {
             flag = AlipaySignature.rsaCheckV1(params, alipayPublicKey, charset, signType);
-
         } catch (AlipayApiException e) {
             e.printStackTrace();
         }
@@ -95,7 +89,7 @@ public class CreditNotifyController {
                 //根据查询到的信息更新订单信息
                 updateOrder(order, orderNo);
                 //弹出电池
-                //borrowBattery(outOrderNo, creditOrder, order);
+                borrowBattery(order);
             } else if ("ORDER_COMPLETE_NOTIFY".equals(notifyType)) {
                 //更新订单信息
                 updateComplateOrder(creditOrder, order);
@@ -108,13 +102,13 @@ public class CreditNotifyController {
     }
 
     //弹出电池
-    private void borrowBattery(String outOrderNo, CreditOrder creditOrder, Order order) throws IOException {
+    private void borrowBattery(Order order) throws IOException {
         //从订单中获取设备的sid和cabletype
         String sid = order.getBorrowStationId().toString();
         String cableType = order.getCable().toString();
         //获取设备的mac，在弹出电池时会使用
         String mac = stationMapper.getStationMac(Long.valueOf(sid));
-        socketService.SendCmd("ACT:borrow_battery;EVENT_CODE:1;STATIONID:" + sid + ";MAC:" + mac + ";ORDERID:" + outOrderNo + ";COLORID:7;CABLE:" + cableType + ";\r\n");
+        socketService.SendCmd("ACT:borrow_battery;EVENT_CODE:1;STATIONID:" + sid + ";MAC:" + mac + ";ORDERID:" + order.getOrderid() + ";COLORID:7;CABLE:" + cableType + ";\r\n");
     }
 
     /*
