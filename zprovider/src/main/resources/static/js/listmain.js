@@ -7,7 +7,6 @@ $(function() {
 		type: "post",
 		url: "http://www.duxinyuan.top/shop/getShopList",
 		data: {
-			// session: session,
             longitude: longitude,
             latitude: latitude
 		},

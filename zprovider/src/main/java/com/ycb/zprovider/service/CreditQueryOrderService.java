@@ -18,6 +18,8 @@ import java.util.Map;
 
 /**
  * Created by Huo on 2017/9/11.
+ *
+ * 根据商户的订单号，调用支付宝的查询接口查询订单的详细信息
  */
 @Service
 public class CreditQueryOrderService {
@@ -32,7 +34,7 @@ public class CreditQueryOrderService {
         CreditOrder creditOrder = new CreditOrder();
         AlipayClient alipayClient = alipayClientFactory.newInstance();
         ZhimaMerchantOrderRentQueryRequest request = new ZhimaMerchantOrderRentQueryRequest();
-        //信用借还的产品码:w1010100000000002858
+        //信用借还的产品码
         String productCode = GlobalConfig.Z_PRODUCT_CODE;
 
         Map<String, Object> bizContentMap = new LinkedHashMap<>();
@@ -42,7 +44,6 @@ public class CreditQueryOrderService {
         ZhimaMerchantOrderRentQueryResponse response = null;
         try {
             response = alipayClient.execute(request);
-            System.out.println(alipayClient.sdkExecute(request));
         } catch (AlipayApiException e) {
             e.printStackTrace();
         }
