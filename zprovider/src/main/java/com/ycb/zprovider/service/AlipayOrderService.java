@@ -70,7 +70,7 @@ public class AlipayOrderService {
         ShopStation shopStation = shopStationMapper.findShopStationIdBySid(sid);
         Station station = stationMapper.getStationBySid(sid);
         order.setBorrowShopStationId(shopStation.getId());
-        order.setBorrowStationId(station.getId());
+        order.setBorrowStationId(station.getSid());
         //设置租借地点
         order.setBorrowStationName(responseShop.getName());
         order.setBorrowCity(responseShop.getCity());

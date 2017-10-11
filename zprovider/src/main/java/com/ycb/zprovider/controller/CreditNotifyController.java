@@ -191,7 +191,7 @@ public class CreditNotifyController {
                     //根据查询到的信息更新订单信息
                     updateOrder(order, orderNo);
                     //弹出电池
-                    //borrowBattery(order);
+                    borrowBattery(order);
                 } else if ("ORDER_COMPLETE_NOTIFY".equals(notifyType)) {
                     //更新订单信息
                     updateComplateOrder(creditOrder, order);
