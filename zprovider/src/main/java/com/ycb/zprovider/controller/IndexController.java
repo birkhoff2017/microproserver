@@ -28,13 +28,13 @@ public class IndexController {
         if (agent.indexOf("micromessenger") > 0) {
             System.out.println("微信支付");
             response.setContentType("text/html;charset=UTF-8");
-            response.sendRedirect("https://m.dev.yunchongba.com/q/"+stationId);
+            response.sendRedirect(GlobalConfig.WX_MINIAPP_URL + stationId);
         } else if (agent.indexOf("alipayclient") > 0) {
             System.out.println("阿里支付");
             String url = GlobalConfig.ZFB_SEND_AUTH_URL +
                     "app_id=" + appId +
                     "&scope=auth_base" +
-                    "&redirect_uri=http%3a%2f%2fwww.duxinyuan.top%2foauth%2foauthNotify" +
+                    "&redirect_uri=" + GlobalConfig.Z_AOUTH_REDIRECT_URI +
                     "&state="+stationId;  //设备ID
             response.sendRedirect(url);
         }

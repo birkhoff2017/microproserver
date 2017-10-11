@@ -21,7 +21,7 @@ $(function () {
         if (pastDate==undefined || (d.getTime()-pastDate) < 180*1000){
             $.ajax({
                 type: "post",
-                url: "http://www.duxinyuan.top/machineinfo/getMachineInfo",
+                url: urlObject.getMachineInfo,
                 data: {
                     sid: sid,
                     session: session
@@ -55,7 +55,7 @@ $(function () {
 $('.button-right').click(function () {
     $.ajax({
         type: "post",
-        url: "http://www.duxinyuan.top/creditcreate/createOrder",
+        url: urlObject.createOrder,
         data: {
             sid: sid,
             session: session,
@@ -72,7 +72,7 @@ $('.button-right').click(function () {
 $('.button-left').click(function () {
     $.ajax({
         type: "post",
-        url: "http://www.duxinyuan.top/creditcreate/createOrder",
+        url: urlObject.createOrder,
         data: {
             sid: sid,
             session: session,

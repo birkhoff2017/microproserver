@@ -17,7 +17,7 @@ var session = Request['session'];
 $(function() {
 	$.ajax({
 		type: "post",
-		url: "http://www.duxinyuan.top/order/getOrderList",
+		url: urlObject.getOrderList,
 		data: {
 			session: session,
 		},

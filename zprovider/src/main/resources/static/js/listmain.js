@@ -3,9 +3,10 @@ $(function() {
     Request = GetRequest();
     var longitude = Request['longitude'];
     var latitude = Request['latitude'];
-	$.ajax({
+
+    $.ajax({
 		type: "post",
-		url: "http://www.duxinyuan.top/shop/getShopList",
+		url: urlObject.getShopList_url,
 		data: {
             longitude: longitude,
             latitude: latitude
@@ -34,7 +35,7 @@ $(function() {
             }
 
             $('.viewH').click(function () {
-                location.href = "http://www.duxinyuan.top/listdetails.html?shop_id="+this.lastElementChild.value;
+                location.href = urlObject.shopDetails_url + this.lastElementChild.value;
             });
 		}
 	})

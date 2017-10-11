@@ -6,6 +6,7 @@ import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.AlipayOpenPublicMessageCustomSendRequest;
 import com.alipay.api.response.AlipayOpenPublicMessageCustomSendResponse;
 import com.ycb.zprovider.cache.RedisService;
+import com.ycb.zprovider.constant.GlobalConfig;
 import com.ycb.zprovider.mapper.OrderMapper;
 import com.ycb.zprovider.mapper.StationMapper;
 import com.ycb.zprovider.service.CreditQueryOrderService;
@@ -104,6 +105,7 @@ public class CreditNotifyController {
                     // session
                     String session = MD5.getMessageDigest(userId.getBytes());
                     Long pastDate = new Date().getTime();//获取当前时间用来前台验证失效
+                    String url = GlobalConfig.Z_GATEWAY_URL + "borrow.html?sid=" + sid + "&session=" + session + "&pastDate=" + pastDate;
                     //发消息
                     AlipayClient alipayClient = alipayClientFactory.newInstance();
                     AlipayOpenPublicMessageCustomSendRequest req = new AlipayOpenPublicMessageCustomSendRequest();
@@ -113,15 +115,15 @@ public class CreditNotifyController {
                     Map<String, String> map1 = new HashMap<String, String>();
                     map1.put("action_name", "立即查看");
                     map1.put("desc", "图文内容");
-                    map1.put("image_url", "https://oalipay-dl-django.alicdn.com/rest/1.0/image?fileIds=LQ8WWI46Qde4YXipYdMEngAAACMAAQED&zoom=original");
+                    map1.put("image_url", GlobalConfig.Z_MESSAGE_BIGIMG);
                     map1.put("title", "点击租借");
-                    map1.put("url", "http://www.duxinyuan.top/borrow.html?sid=" + sid + "&session=" + session + "&pastDate=" + pastDate);
+                    map1.put("url", url);
                     Map<String, String> map2 = new HashMap<String, String>();
                     map2.put("action_name", "立即查看");
                     map2.put("desc", "图文内容");
-                    map2.put("image_url", "https://oalipay-dl-django.alicdn.com/rest/1.0/image?fileIds=4cdPw6zgRP6dPs6RYorWDAAAACMAAQED&zoom=original");
+                    map2.put("image_url", GlobalConfig.Z_MESSAGE_SMALLIMG);
                     map2.put("title", "点我点我 | 租借充电宝");
-                    map2.put("url", "http://www.duxinyuan.top/borrow.html?sid=" + sid + "&session=" + session + "&pastDate=" + pastDate);
+                    map2.put("url", url);
                     articleList.add(map1);
                     articleList.add(map2);
 

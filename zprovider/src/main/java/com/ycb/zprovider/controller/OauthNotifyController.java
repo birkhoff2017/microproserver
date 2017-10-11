@@ -81,7 +81,7 @@ public class OauthNotifyController {
                     this.userMapper.update(optlock, new Date(), alipayUserId);
                 }
                 //跳转到用户中心
-                response.sendRedirect("http://www.duxinyuan.top/user.html?session=" + session);
+                response.sendRedirect(GlobalConfig.Z_GATEWAY_URL + "user.html?session=" + session);
 
             }else {
                 Integer optlock = this.userMapper.findByOpenid(alipayUserId);
@@ -103,13 +103,13 @@ public class OauthNotifyController {
                     redisService.setKeyValueTimeout(userOrSid, stationId, 300);
 
                     //让用户关注
-                    String url = "http://p.alipay.com/P/RuMIvyjz";
+                    String url = GlobalConfig.Z_ATTENTION_URI;
                     response.sendRedirect(url);
 
                 }else {
                     optlock++;
                     this.userMapper.update(optlock, new Date(), alipayUserId);
-                    response.sendRedirect("http://www.duxinyuan.top/borrow.html?sid=" + stationId + "&session=" + session);
+                    response.sendRedirect(GlobalConfig.Z_GATEWAY_URL + "borrow.html?sid=" + stationId + "&session=" + session);
                 }
             }
         } catch (AlipayApiException e) {
@@ -123,7 +123,7 @@ public class OauthNotifyController {
         String url = GlobalConfig.ZFB_SEND_AUTH_URL +
                 "app_id=" + appId +
                 "&scope=auth_base" +
-                "&redirect_uri=http%3a%2f%2fwww.duxinyuan.top%2foauth%2foauthNotify";
+                "&redirect_uri="+ GlobalConfig.Z_AOUTH_REDIRECT_URI;
         try {
             response.sendRedirect(url);
         } catch (IOException e) {

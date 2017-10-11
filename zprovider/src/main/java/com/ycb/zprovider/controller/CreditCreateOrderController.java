@@ -54,7 +54,7 @@ public class CreditCreateOrderController {
         AlipayClient alipayClient = alipayClientFactory.newInstance();
         ZhimaMerchantOrderRentCreateRequest request = new ZhimaMerchantOrderRentCreateRequest();
         // 在借用完成页面会自动回调到商户提供的invoke_return_url地址链接，目前商户链接跳转是通过自动跳转的方式实现。
-        String invokeReturnUrl = "http://www.duxinyuan.top/loading.html";
+        String invokeReturnUrl = GlobalConfig.Z_GATEWAY_URL + "loading.html";
         //下面的代码用来生成外部订单号，就是商户自己的订单号
         String date = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
         Random random = new Random();

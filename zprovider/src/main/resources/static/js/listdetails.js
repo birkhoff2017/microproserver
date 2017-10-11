@@ -5,7 +5,7 @@ $(function () {
 
     $.ajax({
         type: "post",
-        url: "http://www.duxinyuan.top/shop/getShopInfo",
+        url: urlObject.getShopInfo,
         data: {
             shop_id: shop_id
         },
