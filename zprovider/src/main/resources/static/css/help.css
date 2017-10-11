@@ -1,0 +1,116 @@
+* {
+	margin:0;padding:0;
+}
+html {
+	width:100%;
+	height:100%;
+    font-size: 62.5%;
+    color: #222;
+}
+body {
+	background-color:#fff;
+}
+
+/*总菜单容器*/
+
+.box {
+    display: flex;
+    justify-content: center;
+}
+
+.page {
+    width: 100%;
+    background-color: #d3d3d3;
+    font-size:1.6rem;
+}
+
+.page_bd {
+    margin: 0.5rem 0;
+    background-color: #fff;
+}
+
+.page_bd .listhide {
+    margin-left: 1.5rem;
+}
+
+.page_bd1 {
+    border-bottom: 0.1rem solid #d3d3d3;
+    /*margin-bottom: 15rem;*/
+}
+
+.body_show {
+	display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    border: 1px solid;
+    border-color: beige;
+    padding: 1rem 1rem 1rem 0;
+    padding-left: 2.2rem;
+}
+
+.body_show .dian {
+    width: 0.8rem;
+    height: 0.8rem;
+    display:none;
+    /*position: absolute;
+    left: 0;
+    top: 0.7rem;*/
+}
+
+.look,.pack{
+    width: 1.5rem;
+    height: 1.5rem;
+    /*position: absolute;
+    right: 0;
+    top: 0.4rem;*/
+}
+.body_hide {
+	display:none;
+}
+.body_hide .listhide {
+    display: block;
+    border-bottom: 1px solid;
+    border-color: beige;
+    padding: 1rem;
+}
+
+/*.display_none, .display_none1, .display_none2, .display_none3 {
+    display: none;
+}*/
+
+.footer-del {
+    width: 100%;
+    height: 4.8rem;
+    position: fixed;
+    bottom: 10rem;
+    left: 0%;
+    border-radius: 2rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.footer-del .txtfooter {
+    width: 25rem;
+    line-height: 4.8rem;
+    background: linear-gradient(to right, #0c9, #44e08c);
+    border-radius: 2rem;
+    text-align: center;
+    color: #fff;
+}
+
+.img-service {
+    margin-top: 0rem;
+    margin-right: 1rem;
+    vertical-align: middle;
+}
+
+.footer-img {
+    width: 100%;
+    position: fixed;
+    bottom: -0.5rem;
+    left: 0rem;
+}
+.pack {
+	display:none;
+}

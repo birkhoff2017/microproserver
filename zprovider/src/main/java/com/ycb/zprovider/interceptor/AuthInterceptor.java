@@ -18,17 +18,14 @@ public class AuthInterceptor extends WebMvcConfigurerAdapter {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authHandlerInterceptor())
-                .addPathPatterns("/borrow/getMachineInfo")
-                .addPathPatterns("/formid/submitFormId")
+                .addPathPatterns("/creditcreate/createOrder")
+                .addPathPatterns("/machineinfo/getMachineInfo")
                 .addPathPatterns("/order/getOrderList")
                 .addPathPatterns("/order/getOrderStatus")
-                .addPathPatterns("/wxpay/payment")
-                .addPathPatterns("/refund/getRefundList")
-                .addPathPatterns("/refund/doRefund")
-                .addPathPatterns("/shop/getShopList")
-                .addPathPatterns("/shop/getShopInfo")
-                .addPathPatterns("/user/userInfo")
-                .excludePathPatterns("/user/login");
-        // super.addInterceptors(registry);
+                .excludePathPatterns("/shop/getShopList")
+                .excludePathPatterns("/shop/getShopInfo")
+                .excludePathPatterns("/gateway/notify");
+                //开发环境中注释掉，拦截器不起作用，方便开发，
+                // super.addInterceptors(registry);
     }
 }
