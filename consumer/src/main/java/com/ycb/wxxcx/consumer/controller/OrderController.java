@@ -19,6 +19,17 @@ public class OrderController {
     @Autowired
     private RestTemplate restTemplate;
 
+    // 获取某个订单的详细信息
+    @RequestMapping(value = "/getOrderInfo", method = RequestMethod.POST)
+    public String querySingleOrder(@RequestParam("session") String session, @RequestParam("orderid") String orderid) {
+        MultiValueMap<String, Object> param = new LinkedMultiValueMap();
+        param.add("session", session);
+        param.add("orderid", orderid);
+        String result = restTemplate.postForObject("http://provider:18080/order/getOrderInfo", param, String.class);
+        return result;
+    }
+
+
     // 获取用户的订单记录
     @RequestMapping(value = "/getOrderList", method = RequestMethod.POST)
     public String query(@RequestParam("session") String session) {

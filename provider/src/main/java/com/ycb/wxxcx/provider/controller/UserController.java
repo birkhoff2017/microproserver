@@ -114,7 +114,7 @@ public class UserController {
         } catch (Exception e) {
             logger.error(e.getMessage());
             bacMap.put("data", null);
-            bacMap.put("code", 0);
+            bacMap.put("code", 1);
             bacMap.put("msg", "失败");
         }
         return JsonUtils.writeValueAsString(bacMap);

@@ -51,21 +51,29 @@ public class OrderController {
      * @return 订单详情
      */
     @RequestMapping(value = "/getOrderInfo", method = RequestMethod.POST)
+    @ResponseBody
     public String querySingleOrder(@RequestParam("session") String session, @RequestParam("orderid") String orderid) {
-        Map<String, Object> map = new HashMap<>();
-        TradeLog tradeLog = this.orderMapper.findOrderByOrderId(orderid);
-        FeeStrategy feeStrategyEntity = tradeLog.getFeeStrategy();
-        if (feeStrategyEntity == null) {
-            feeStrategyEntity = feeStrategyMapper.findGlobalFeeStrategy();
-            tradeLog.setFeeStrategy(feeStrategyEntity);
+        Map<String, Object> bacMap = new HashMap<>();
+        try {
+            TradeLog tradeLog = this.orderMapper.findOrderByOrderId(orderid);
+            FeeStrategy feeStrategyEntity = tradeLog.getFeeStrategyEntity();
+            if (feeStrategyEntity == null) {
+                feeStrategyEntity = feeStrategyMapper.findGlobalFeeStrategy();
+                tradeLog.setFeeStrategyEntity(feeStrategyEntity);
+            }
+            tradeLog.setFeeStrategy(feeStrategyService.transFeeStrategy(feeStrategyEntity));
+            Map<String, Object> data = new HashMap<>();
+            data.put("order", tradeLog);
+            bacMap.put("data", data);
+            bacMap.put("code", 0);
+            bacMap.put("msg", "成功");
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            bacMap.put("data", null);
+            bacMap.put("code", 1);
+            bacMap.put("msg", "失败");
         }
-        tradeLog.setFeeStr(feeStrategyService.transFeeStrategy(feeStrategyEntity));
-        Map<String, Object> data = new HashMap<>();
-        data.put("orders", tradeLog);
-        map.put("data", data);
-        map.put("code", 0);
-        map.put("msg", "成功");
-        return JsonUtils.writeValueAsString(map);
+        return JsonUtils.writeValueAsString(bacMap);
     }
 
     // 获取用户的订单记录
@@ -78,8 +86,9 @@ public class OrderController {
             User user = this.userMapper.findUserinfoByOpenid(openid);
             List<TradeLog> tradeLogList = this.orderMapper.findTradeLogs(user.getId());
             for (int i = 0; i < tradeLogList.size(); i++) {
-                tradeLogList.get(i).setFeeStr(feeStrategyService.transFeeStrategy(tradeLogList.get(i).getFeeStrategy()));
-                tradeLogList.get(i).setUseFee(feeStrategyService.calUseFee(tradeLogList.get(i).getFeeStrategy(),
+                tradeLogList.get(i).setFeeStrategy(feeStrategyService.transFeeStrategy(tradeLogList.get(i).getFeeStrategyEntity()));
+                tradeLogList.get(i).setUseFee(feeStrategyService.calUseFee(
+                        tradeLogList.get(i).getFeeStrategyEntity(),
                         tradeLogList.get(i).getDuration(),
                         tradeLogList.get(i).getStatus(),
                         tradeLogList.get(i).getUseFee()));
@@ -113,6 +122,7 @@ public class OrderController {
      * @throws IOException
      */
     @RequestMapping(value = "/getOrderStatus", method = RequestMethod.POST)
+    @ResponseBody
     public String getOrderStatus(@RequestParam("session") String session,
                                  @RequestParam("orderid") String orderid) throws IOException {
         Map<String, Object> bacMap = new HashMap<>();
