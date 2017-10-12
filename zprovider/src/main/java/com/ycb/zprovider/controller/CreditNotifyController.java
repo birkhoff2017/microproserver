@@ -188,13 +188,17 @@ public class CreditNotifyController {
                 Order order = orderMapper.findOrderByOrderId(outOrderNo);
                 //对于订单创建事件
                 if ("ORDER_CREATE_NOTIFY".equals(notifyType)) {
-                    //根据查询到的信息更新订单信息
-                    updateOrder(order, orderNo);
-                    //弹出电池
-                    borrowBattery(order);
+                    if (!StringUtils.isEmpty(orderNo)){
+                        //根据查询到的信息更新订单信息
+                        updateOrder(order, orderNo);
+                        //弹出电池
+                        borrowBattery(order);
+                    }
                 } else if ("ORDER_COMPLETE_NOTIFY".equals(notifyType)) {
-                    //更新订单信息
-                    updateComplateOrder(creditOrder, order);
+                    if (!StringUtils.isEmpty(creditOrder.getAlipayFundOrderNo())){
+                        //更新订单信息
+                        updateComplateOrder(creditOrder, order);
+                    }
                 }
                 //返回 success
                 printResponse(response, "success");

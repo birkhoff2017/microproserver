@@ -13,7 +13,7 @@ public interface ShopStationMapper {
     @Select("Select id from ycb_mcs_shop_station ss WHERE ss.station_id =#{sid}")
     ShopStation findShopStationIdBySid(String sid);
 
-    //通過用戶id查詢交易记录
+    //通過设备id查詢收费策略
     @Select("SELECT f.* " +
             "FROM ycb_mcs_shop_station ss " +
             "LEFT JOIN ycb_mcs_fee_strategy f " +

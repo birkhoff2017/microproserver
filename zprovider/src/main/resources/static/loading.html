@@ -27,9 +27,15 @@
 			}
 			ready(function() {
                 var url_param = location.search; //获取url中"?"符后的字串
+                if(url_param.indexOf("error_code")>=0){
+                    alert("借用失败");
+                    AlipayJSBridge.call('popWindow');
+                    return;
+                }
                 if(url_param.indexOf("return_type")<=0){
 					alert("信用借用成功，请等待充电宝弹出，谢谢");
                     AlipayJSBridge.call('popWindow');
+                    return;
 				}
 
 				AlipayJSBridge.call('getCurrentLocation', {

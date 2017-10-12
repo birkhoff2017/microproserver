@@ -77,8 +77,8 @@ public class CreditMachineInfoController {
             data.put("need_pay", feeStrategyService.calNeedPay(defaultPay, user.getUsablemoney()));//用户需支付金额
             data.put("deposite_need", defaultPay);//当用户余额为零时，所需押金
             data.put("usable_money", user.getUsablemoney());//用户可用金额
-            //data.put("fee_strategy", feeStr);//收费策略
-            data.put("fee_strategy", "每小时收费1元。每天最高收费10元。");//收费策略
+            data.put("fee_strategy", feeStr);//收费策略
+            //data.put("fee_strategy", "每小时收费1元。每天最高收费10元。");//收费策略
             data.put("free_display", !exitOrder);// 显示免费
             data.put("cable_type", JsonUtils.readValue(cable_type));
             bacMap.put("data", data);
