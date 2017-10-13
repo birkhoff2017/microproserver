@@ -61,14 +61,17 @@ public class BorrowController {
             String cable_type = stationMapper.getUsableBatteries(Long.valueOf(sid));
             // 判断设备是否在线
             String lastHearTime = redisService.getKeyValue(sid);
+            Boolean offLine = false;
             if (StringUtils.isEmpty(lastHearTime) || (new Date().getTime() / 1000 - Long.valueOf(lastHearTime)) > 60 * 5) {
                 cable_type = "{\"1\":\"0\",\"2\":\"0\",\"3\":\"0\"}";
+                offLine = true;
             }
             FeeStrategy feeStrategy = feeStrategyService.findFeeStrategyByStation(Long.valueOf(sid));
             String feeStr = feeStrategyService.transFeeStrategy(feeStrategy);
             Boolean exitOrder = orderMapper.findTodayOrder(Long.valueOf(sid), user.getId());
             //获取押金金额
             BigDecimal defaultPay = shopMapper.getShopDefaultPayInfoBySid(sid);
+            data.put("offLine", offLine);
             data.put("sid", sid);
             data.put("tid", session);
             data.put("need_pay", feeStrategyService.calNeedPay(defaultPay, user.getUsablemoney()));//用户需支付金额
