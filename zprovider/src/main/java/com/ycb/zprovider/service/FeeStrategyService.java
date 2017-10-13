@@ -48,6 +48,23 @@ public class FeeStrategyService {
         return fixedStr + feeStr + maxFeeStr;
     }
 
+    //信用借还中租金信息描述 ,长度不超过14个汉字，只用于页面展示给C端用户，除此之外无其他意义。
+    //例如：1小时免费，10元/天
+    public String creditDescFeeStrategy(FeeStrategy feeStrategy) {
+        //固定收费
+        Long fixedTime = feeStrategy.getFixedTime();
+        Long fixedUnit = feeStrategy.getFixedUnit();
+        BigDecimal fixed = feeStrategy.getFixed();
+        String fixedStr = StringUtils.isEmpty(fixed) ? "" : fixedTime + TimeUtil.getUnitString(fixedUnit) + "免费，";
+
+        // 每天最高收费
+        Long maxFeeUnit = feeStrategy.getMaxFeeUnit();
+        BigDecimal maxFee = feeStrategy.getMaxFee();
+        String maxFeeUnitStr = TimeUtil.getUnitString(maxFeeUnit);
+        String maxFeeStr = StringUtils.isEmpty(maxFee) ? "" : maxFee + "元/" + maxFeeUnitStr;
+        return fixedStr + maxFeeStr;
+    }
+
     /**
      * 根据收费策略计算已花费租金
      *
