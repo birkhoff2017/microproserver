@@ -19,6 +19,7 @@ body {
     align-items: center;
     border-right: 1rem solid #0c9;
     background-color: #fff;
+    border-bottom:0.5rem solid #d3d3d3;
 }
 .doneview1 {
     position: relative;
@@ -70,7 +71,7 @@ body {
 }
 
 .weui_cell_bd_p {
-    font-size: 1..4rem;
+    font-size: 1.4rem;
     color: #939393;
     margin-top: 0.5rem;
 }
