@@ -7,8 +7,10 @@ import com.alipay.api.response.ZhimaMerchantOrderRentCreateResponse;
 import com.ycb.zprovider.constant.GlobalConfig;
 import com.ycb.zprovider.mapper.ShopMapper;
 import com.ycb.zprovider.service.AlipayOrderService;
+import com.ycb.zprovider.service.FeeStrategyService;
 import com.ycb.zprovider.utils.JsonUtils;
 import com.ycb.zprovider.vo.AlipayClientFactory;
+import com.ycb.zprovider.vo.FeeStrategy;
 import com.ycb.zprovider.vo.Shop;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +42,9 @@ public class CreditCreateOrderController {
     private ShopMapper shopMapper;
 
     @Autowired
+    private FeeStrategyService feeStrategyService;
+
+    @Autowired
     private AlipayClientFactory alipayClientFactory;
 
     @Autowired
@@ -67,9 +72,10 @@ public class CreditCreateOrderController {
         //信用借还的产品码，传入固定值：w1010100000000002858
         String productCode = GlobalConfig.Z_PRODUCT_CODE;
         //物品名称,最长不能超过14个汉字
-        String goodsName = "充电宝";
-        //租金信息描述 ,长度不超过14个汉字，只用于页面展示给C端用户，除此之外无其他意义。
-        String rentInfo = "1小时免费，10元/天";
+        String goodsName = "云充吧-充电宝";
+        //租金信息描述 ,长度不超过14个汉字，只用于页面展示给C端用户，除此之外无其他意义。例如：1小时免费，10元/天
+        FeeStrategy feeStrategy = feeStrategyService.findFeeStrategyByStation(Long.valueOf(sid));
+        String rentInfo = feeStrategyService.creditDescFeeStrategy(feeStrategy);
         /*
         租金单位，租金+租金单位组合才具备实际的租金意义。
         取值定义如下：
@@ -82,10 +88,7 @@ public class CreditCreateOrderController {
         =0.00元，代表无租金，免费借用
         注：参数传值必须>=0，传入其他值会报错参数非法
          */
-        //这里还需要商议
-//        FeeStrategy feeStrategy = feeStrategyService.findFeeStrategyByStation(Long.valueOf(sid));
-//        String rentAmount = feeStrategy.getFixed().toString();
-        String rentAmount = "1";
+        String rentAmount = feeStrategy.getFee().toString();
         /*
         押金，金额单位：元。
          */

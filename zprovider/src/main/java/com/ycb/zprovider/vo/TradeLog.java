@@ -19,7 +19,7 @@ public class TradeLog {
     // 租借时间
     private String borrowTime = "";   //原来是date
     // 收费策略
-    private String feeStr = "";
+    private String feeStrategy = "";
     // 归还地点
     private String returnName = "";
     //归还时间
@@ -33,10 +33,13 @@ public class TradeLog {
     //用来接从数据库查出来的时长
     private Long duration;
     //收费策略
-    private FeeStrategy feeStrategy;
+    private FeeStrategy feeStrategyEntity;
 
     //信用借还的订单号
     private String orderNo;
+
+    //资金流水号，用于商户与支付宝进行对账
+    private String alipayFundOrderNo;
 
     public BigDecimal getUsefee() {
         return usefee;
@@ -61,9 +64,6 @@ public class TradeLog {
     public void setAlipayFundOrderNo(String alipayFundOrderNo) {
         this.alipayFundOrderNo = alipayFundOrderNo;
     }
-
-    //资金流水号，用于商户与支付宝进行对账
-    private String alipayFundOrderNo;
 
     public String getOrderid() {
         return orderid;
@@ -97,12 +97,12 @@ public class TradeLog {
         this.borrowTime = borrowTime;
     }
 
-    public String getFeeStr() {
-        return feeStr;
+    public String getFeeStrategy() {
+        return feeStrategy;
     }
 
-    public void setFeeStr(String feeStr) {
-        this.feeStr = feeStr;
+    public void setFeeStrategy(String feeStrategy) {
+        this.feeStrategy = feeStrategy;
     }
 
     public String getReturnName() {
@@ -156,11 +156,11 @@ public class TradeLog {
         this.duration = duration;
     }
 
-    public FeeStrategy getFeeStrategy() {
-        return feeStrategy;
+    public FeeStrategy getFeeStrategyEntity() {
+        return feeStrategyEntity;
     }
 
-    public void setFeeStrategy(FeeStrategy feeStrategy) {
-        this.feeStrategy = feeStrategy;
+    public void setFeeStrategyEntity(FeeStrategy feeStrategyEntity) {
+        this.feeStrategyEntity = feeStrategyEntity;
     }
 }
