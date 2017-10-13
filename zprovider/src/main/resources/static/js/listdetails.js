@@ -75,3 +75,9 @@ function GetRequest() {
     }
     return theRequest;
 }
+
+//马上导航
+var btn = document.querySelector('#M_btn_scanQR');
+btn.addEventListener('click', function(){
+    Location.href = "map.html";
+});

@@ -1,10 +1,9 @@
-$('.body_show').click(function(){
-	$('.body_hide').toggle();
-	$(".lookpack").toggle();
+$('.page_bd').click(function(){
+	$(this).children('.body_hide').slideToggle();
+//	$(this).children('.body_hide').slideToggle().parents('.page_bd').siblings('.page_bd').children('.body_hide').hide();
+	$(this).find(".lookpack").toggle();
+	$(this).find('.dian').toggle();
 })
-//$('.body_show').click(function() {
-//	$(".lookpack").toggle();
-//})
 $('.listOne1').click(function(){
 	location.href = "helprentone.html";
 })
@@ -32,3 +31,9 @@ $('.listFour2').click(function(){
 $('.listFour3').click(function(){
 	location.href = "helpusethree.html";
 })
+
+//拨打电话
+var btn = document.querySelector('#lianxikefu');
+btn.addEventListener('click', function(){
+    ap.makePhoneCall($('#contact_phone').html());
+});
