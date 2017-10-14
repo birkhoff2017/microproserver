@@ -89,7 +89,6 @@ public class RefundController {
     @RequestMapping(value = "/doRefund", method = RequestMethod.POST)
     @ResponseBody
     public String wechatRefund(@RequestParam("session") String session) throws UnsupportedEncodingException {
-
         Map<String, Object> bacMap = new HashMap<>();
         String openid = redisService.getKeyValue(session);
         User user = this.userMapper.findUserMoneyByOpenid(openid);//查询用户可用余额
@@ -102,7 +101,6 @@ public class RefundController {
         }
         //根据用户uid拿订单
         List<Order> orderList = this.orderMapper.findOrderListIdByUid(user.getId());
-
         if (null == orderList || 0 == orderList.size()) {
             bacMap.put("code", 2);
             bacMap.put("msg", "查询失败,没有可退款的订单)");
@@ -121,19 +119,15 @@ public class RefundController {
                 refund.setUid(user.getId());
                 refund.setCreatedBy("SYS:refund");
                 this.refundMapper.insertRefund(refund);//写入退款记录表
-
                 //更新用户待退款金额
                 user.setRefund(refundMoney);
                 user.setLastModifiedBy("SYS:refund");
                 this.userMapper.updateUserRefund(user);
-
                 newRefund = this.refundMapper.findRefundIdByUid(user.getId());//拿退款编号
-
                 String out_trade_no = orderList.get(i).getOrderid();//商户订单号
                 String out_refund_no = newRefund.getId().toString();//商户退款编号
                 Long total_fee = orderList.get(i).getPaid().multiply(BigDecimal.valueOf(100)).longValueExact();//订单金额
                 Long refund_fee = refundMoney.multiply(BigDecimal.valueOf(100)).longValueExact();//退款总金额
-
                 SortedMap<String, Object> parameters = new TreeMap<String, Object>();
                 parameters.put("appid", appID);//公众账号ID
                 parameters.put("mch_id", mchId);//商户号
@@ -145,10 +139,8 @@ public class RefundController {
                 parameters.put("total_fee", total_fee); //订单总金额：单位为分
                 parameters.put("refund_fee", refund_fee); //退款总金额：单位为分
                 parameters.put("op_user_id", mchId);// 操作员帐号, 默认为商户号
-
                 String xml = WXPayUtil.map2Xml(parameters, key);
                 String createOrderURL = GlobalConfig.WX_CREATORDER_URL;
-
                 try {
                     String mch_id = mchId;
                     Map map = RefundUtil.forRefund(createOrderURL, xml, mch_id);
@@ -171,7 +163,6 @@ public class RefundController {
                             order.setStatus(4);
                             order.setRefunded(refundMoney);  //更新已退款至账户的金额
                             this.orderMapper.updateOrderStatusToFour(order);
-
                             //推送退款成功消息
                             Message message = this.messageService.getFormIdByOpenid(openid); //获取form_id
                             if (null !=message){
@@ -180,7 +171,6 @@ public class RefundController {
                             }else {
                                 logger.info("orderId:" + orderList.get(i).getOrderid() + "该条退款消息推送失败！没有可用的form_id了");
                             }
-
                             bacMap.put("code", 0);
                             bacMap.put("msg", "退款成功");
                             bacMap.put("errcode", 0);
@@ -221,7 +211,6 @@ public class RefundController {
         try {
             String responseStr = HttpRequest.parseWeixinCallback(request); //微信返回的结果
             Map<String, Object> map = XmlUtil.doXMLParse(responseStr);
-
             if ("FAIL".equalsIgnoreCase(map.get("return_code").toString())) {
                 logger.error("微信回调失败");
                 return WXPayUtil.setXML("FAIL", "weixin refund fail");
@@ -232,44 +221,35 @@ public class RefundController {
                 String mch_id = (String) map.get("mch_id");//退款的商户号
                 String nonce_str = (String) map.get("nonce_str");//随机字符串
                 String req_info = (String) map.get("req_info"); //加密信息
-
                 //解密数据
                 Map<String, Object> refundMap = HttpRequest.getRefundInfo(req_info,key);
-
                 String outTradeNo = (String) refundMap.get("out_trade_no");
                 String outRefundNo = (String) refundMap.get("out_refund_no");
                 String refundStatus = (String) refundMap.get("refund_status");
-
                 Long refundId = Long.valueOf(outRefundNo);
                 Refund ref = this.refundMapper.findRefundByRefundId(refundId);
                 if (null == ref){
                     // 数据库里没有这条退款记录 有可能是深圳那边的数据
                     return WXPayUtil.setXML("SUCCESS", "OK");
                 }
-
                 Refund refund = new Refund();
                 refund.setId(refundId);
                 refund.setLastModifiedBy("SYS:refund");
-
                 if ("SUCCESS".equalsIgnoreCase(refundStatus.toString())) {
                     //微信那边退款成功  更新状态和到账时间
                     refund.setStatus(2);//退款成功
                     this.refundMapper.updateStatus(refund);
-
                     logger.info("REFUNDID:" + outRefundNo + "退款到账成功！");
-
                 }else if ("CHANGE".equalsIgnoreCase(refundStatus.toString())){
                     //退款异常
                     refund.setDetail("微信向用户退款异常");
                     this.refundMapper.updateRefundDetail(refund);
                     logger.info("REFUNDID:" + outRefundNo + "退款异常！");
-
                 }else if ("REFUNDCLOSE".equalsIgnoreCase(refundStatus.toString())){
                     //退款关闭
                     refund.setDetail("微信向用户退款关闭");
                     this.refundMapper.updateRefundDetail(refund);
                     logger.info("REFUNDID:" + outRefundNo + "退款关闭！");
-
                 }
                 // 告诉微信服务器，我收到信息了，不要在调用回调action了
                 return WXPayUtil.setXML("SUCCESS", "OK");

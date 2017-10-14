@@ -27,11 +27,9 @@ public class CoreHeaderInterceptor extends HandlerInterceptorAdapter {
 
 
     public static void initHystrixRequestContext(String labels) {
-        logger.info("label: " + labels);
         if (!HystrixRequestContext.isCurrentThreadInitialized()) {
             HystrixRequestContext.initializeContext();
         }
-
         if (!StringUtils.isEmpty(labels)) {
             CoreHeaderInterceptor.label.set(Arrays.asList(labels.split(CoreHeaderInterceptor.HEADER_LABEL_SPLIT)));
         } else {
