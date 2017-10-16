@@ -3,6 +3,10 @@ $(function () {
     Request = GetRequest();
     var shop_id = Request['shop_id'];
 
+    var latitude;
+    var longitude;
+    var name;
+
     $.ajax({
         type: "post",
         url: urlObject.getShopInfo,
@@ -11,9 +15,11 @@ $(function () {
         },
         dataType: "json",
         success: function (data) {
+            latitude = data.data.shop.latitude;
+            longitude = data.data.shop.longitude;
             var usable = 0;
             var empty = 0;
-            var name = data.data.shop.name;
+            name = data.data.shop.name;
             $('.shop_name').html(name);
             var shopaddress = data.data.shop.address;
             $('.bottom_textview3').html(shopaddress);
@@ -37,8 +43,8 @@ $(function () {
             }
             var canborrow = usable;
             var canReturn = empty;
-            $('.lend').attr('src', "img/list/b/l_"+canborrow+".png");
-            $('.repay').attr('src', "img/list/b/l_"+canReturn+".png");
+            $('.lend').attr('src', "img/list/b/l_" + canborrow + ".png");
+            $('.repay').attr('src', "img/list/b/l_" + canReturn + ".png");
 
             $("#J_btn_scanQR").click(function () {
                 window.alert("请使用支付宝扫一扫，扫描充电柜支付宝二维码");
@@ -48,12 +54,17 @@ $(function () {
     })
     //拨打电话
     var btn = document.querySelector('#contact_phone');
-    btn.addEventListener('click', function(){
+    btn.addEventListener('click', function () {
         ap.makePhoneCall($('#contact_phone').html());
+    });
+    //马上导航
+    var btn_map = document.querySelector('#M_btn_scanQR');
+    btn.addEventListener('click', function () {
+        Location.href = 'http://m.amap.com/share/index/__q=' + latitude + ',' + longitude + ',' + name + '&src=jsapi&callapp=0&lnglat=' + longitude + ',' + latitude + '&name=' + name;
     });
 
     //扫一扫
-     //var btnScanQR = document.querySelector('#J_btn_scanQR');
+    //var btnScanQR = document.querySelector('#J_btn_scanQR');
     // btnScanQR.addEventListener('click', function(){
     //     // ap.scan(function(res){
     //     //     ap.alert(res.code);
@@ -77,7 +88,7 @@ function GetRequest() {
 }
 
 //马上导航
-var btn = document.querySelector('#M_btn_scanQR');
-btn.addEventListener('click', function(){
-    Location.href = "map.html";
-});
+// var btn = document.querySelector('#M_btn_scanQR');
+// btn.addEventListener('click', function(){
+//     Location.href = "map.html";
+// });
