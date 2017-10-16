@@ -3,6 +3,7 @@ $(function () {
     Request = GetRequest();
     var shop_id = Request['shop_id'];
 
+
     var latitude;
     var longitude;
     var name;
@@ -50,8 +51,12 @@ $(function () {
                 window.alert("请使用支付宝扫一扫，扫描充电柜支付宝二维码");
                 return false;
             });
-        }
-    })
+            //马上导航
+			$('#M_btn_scanQR').click(function(){
+				location.href = encodeURI(encodeURI("map.html?name="+data.data.shop.name+"&longitude="+data.data.shop.longitude+"&latitude="+data.data.shop.latitude));
+			})
+     }
+ })
     //拨打电话
     var btn = document.querySelector('#contact_phone');
     btn.addEventListener('click', function () {
@@ -62,16 +67,6 @@ $(function () {
     btn.addEventListener('click', function () {
         Location.href = 'http://m.amap.com/share/index/__q=' + latitude + ',' + longitude + ',' + name + '&src=jsapi&callapp=0&lnglat=' + longitude + ',' + latitude + '&name=' + name;
     });
-
-    //扫一扫
-    //var btnScanQR = document.querySelector('#J_btn_scanQR');
-    // btnScanQR.addEventListener('click', function(){
-    //     // ap.scan(function(res){
-    //     //     ap.alert(res.code);
-    //     // });
-    //     alert("请使用支付宝扫一扫，扫描充电柜支付宝二维码");
-    // });
-
 })
 
 function GetRequest() {
@@ -92,3 +87,4 @@ function GetRequest() {
 // btn.addEventListener('click', function(){
 //     Location.href = "map.html";
 // });
+
