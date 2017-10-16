@@ -62,10 +62,13 @@ public class RefundUtil {
             keyStore.load(inputStream, P12_PASSWORD.toCharArray());
         } catch (IOException e) {
             e.printStackTrace();
+            logger.error(e.getMessage());
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
+            logger.error(e.getMessage());
         } catch (CertificateException e) {
             e.printStackTrace();
+            logger.error(e.getMessage());
         } finally {
             inputStream.close();
         }

@@ -26,11 +26,9 @@ public class DefaultRibbonConfiguration {
         if (StringUtils.isEmpty(name)) {
             return null;
         }
-
         if (this.propertiesFactory.isSet(IRule.class, name)) {
             return this.propertiesFactory.get(IRule.class, config, name);
         }
-
         // 默认配置
         LabelAndWeightMetadataRule rule = new LabelAndWeightMetadataRule();
         rule.initWithNiwsConfig(config);
