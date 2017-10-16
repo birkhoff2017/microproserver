@@ -97,7 +97,7 @@ public class FeeStrategyService {
                 useFee = feeStrategy.getFixed();
             } else {
                 useFee = feeStrategy.getFixed().
-                        add(feeStrategy.getFee().multiply(BigDecimal.valueOf((expirTime / feeStrategy.getFeeUnit()))));
+                        add(feeStrategy.getFee().multiply(BigDecimal.valueOf(1L + (expirTime / feeStrategy.getFeeUnit()))));
                 BigDecimal maxFee = feeStrategy.getMaxFee();
                 if (useFee.compareTo(maxFee) > 0) {
                     return maxFee;

@@ -189,10 +189,17 @@ public class CreditNotifyController {
                 //对于订单创建事件
                 if ("ORDER_CREATE_NOTIFY".equals(notifyType)) {
                     if (!StringUtils.isEmpty(orderNo)){
-                        //根据查询到的信息更新订单信息
-                        updateOrder(order, orderNo);
-                        //弹出电池
-                        borrowBattery(order);
+                         /*
+                            注意:订单创建成功异步通知保证一定会发，但不保证只发一次，
+                            处理超时或者网络延迟请求下可能会发2次及以上，所以商户端做好幂等控制。
+                            弹电池前先判读订单状态是否是已弹出，防止弹多个电池
+                         */
+                        if (2 != order.getStatus()){
+                            //根据查询到的信息更新订单信息
+                            updateOrder(order, orderNo);
+                            //弹出电池
+                            borrowBattery(order);
+                        }
                     }
                 } else if ("ORDER_COMPLETE_NOTIFY".equals(notifyType)) {
                     if (!StringUtils.isEmpty(creditOrder.getAlipayFundOrderNo())){

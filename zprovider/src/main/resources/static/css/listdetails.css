@@ -113,3 +113,6 @@ html {
 .button-hover {
     background: #808080;
 }
+#M_btn_scanQR {
+	text-align: center;
+}

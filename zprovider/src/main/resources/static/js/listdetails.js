@@ -3,17 +3,17 @@ $(function () {
     Request = GetRequest();
     var shop_id = Request['shop_id'];
 
-    $.ajax({
-        type: "post",
-        url: urlObject.getShopInfo,
-        data: {
-            shop_id: shop_id
-        },
-        dataType: "json",
-        success: function (data) {
+ $.ajax({
+     type: "post",
+     url: urlObject.getShopInfo,
+     data: {
+         shop_id: shop_id
+     },
+     dataType: "json",
+     success: function (data) {
             var usable = 0;
             var empty = 0;
-            var name = data.data.shop.name;
+            name = data.data.shop.name;
             $('.shop_name').html(name);
             var shopaddress = data.data.shop.address;
             $('.bottom_textview3').html(shopaddress);
@@ -44,22 +44,17 @@ $(function () {
                 window.alert("请使用支付宝扫一扫，扫描充电柜支付宝二维码");
                 return false;
             });
-        }
-    })
+            //马上导航
+			$('#M_btn_scanQR').click(function(){
+				location.href = encodeURI(encodeURI("map.html?name="+data.data.shop.name+"&longitude="+data.data.shop.longitude+"&latitude="+data.data.shop.latitude));
+			})
+     }
+ })
     //拨打电话
     var btn = document.querySelector('#contact_phone');
     btn.addEventListener('click', function(){
         ap.makePhoneCall($('#contact_phone').html());
     });
-
-    //扫一扫
-     //var btnScanQR = document.querySelector('#J_btn_scanQR');
-    // btnScanQR.addEventListener('click', function(){
-    //     // ap.scan(function(res){
-    //     //     ap.alert(res.code);
-    //     // });
-    //     alert("请使用支付宝扫一扫，扫描充电柜支付宝二维码");
-    // });
 
 })
 
@@ -76,8 +71,4 @@ function GetRequest() {
     return theRequest;
 }
 
-//马上导航
-var btn = document.querySelector('#M_btn_scanQR');
-btn.addEventListener('click', function(){
-    Location.href = "map.html";
-});
+
