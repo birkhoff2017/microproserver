@@ -3,7 +3,6 @@ $(function () {
     Request = GetRequest();
     var shop_id = Request['shop_id'];
 
-
     var latitude;
     var longitude;
     var name;
@@ -51,10 +50,10 @@ $(function () {
                 window.alert("请使用支付宝扫一扫，扫描充电柜支付宝二维码");
                 return false;
             });
-            //马上导航
-			$('#M_btn_scanQR').click(function(){
-				location.href = encodeURI(encodeURI("map.html?name="+data.data.shop.name+"&longitude="+data.data.shop.longitude+"&latitude="+data.data.shop.latitude));
-			})
+            // //马上导航
+			// $('#M_btn_scanQR').click(function(){
+			// 	location.href = encodeURI(encodeURI("map.html?name="+data.data.shop.name+"&longitude="+data.data.shop.longitude+"&latitude="+data.data.shop.latitude));
+			// })
      }
  })
     //拨打电话
@@ -63,10 +62,10 @@ $(function () {
         ap.makePhoneCall($('#contact_phone').html());
     });
     //马上导航
-    var btn_map = document.querySelector('#M_btn_scanQR');
-    btn.addEventListener('click', function () {
-        Location.href = 'http://m.amap.com/share/index/__q=' + latitude + ',' + longitude + ',' + name + '&src=jsapi&callapp=0&lnglat=' + longitude + ',' + latitude + '&name=' + name;
-    });
+    $('#M_btn_scanQR').click(function(){
+        //调用高德地图
+        location.href = 'http://m.amap.com/share/index/__q=' + latitude + ',' + longitude + ',' + name + '&src=jsapi&callapp=0&lnglat=' + longitude + ',' + latitude + '&name=' + name;
+    })
 })
 
 function GetRequest() {
@@ -81,10 +80,4 @@ function GetRequest() {
     }
     return theRequest;
 }
-
-//马上导航
-// var btn = document.querySelector('#M_btn_scanQR');
-// btn.addEventListener('click', function(){
-//     Location.href = "map.html";
-// });
 

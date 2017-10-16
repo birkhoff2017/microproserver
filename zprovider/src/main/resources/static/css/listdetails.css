@@ -108,11 +108,15 @@ html {
     color: #fff;
     font-size: 2rem;
     border-radius: 4rem;
+    text-align:center;
 }
 
 .button-hover {
     background: #808080;
 }
-#M_btn_scanQR {
-	text-align: center;
-}
+/*#M_btn_scanQR {*/
+	/*text-align: center;*/
+/*}*/
+/*#J_btn_scanQR {*/
+    /*text-align:center;*/
+/*}*/
