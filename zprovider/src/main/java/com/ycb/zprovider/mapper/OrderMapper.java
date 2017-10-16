@@ -57,7 +57,7 @@ public interface OrderMapper {
     List<Order> findOrderListIdByUid(Long customer);
 
     //通过订单编号查询在调用信用借还完结接口时的信息
-    @Select("SELECT borrow_station_id,cable,orderid,order_no,return_time,price,return_shop_id,borrow_time,usefee" +
+    @Select("SELECT borrow_station_id,status,cable,orderid,order_no,return_time,price,return_shop_id,borrow_time,usefee" +
             " from ycb_mcs_tradelog " +
             "WHERE orderid=#{orderid}")
     @Results(value = {
@@ -69,8 +69,8 @@ public interface OrderMapper {
             @Result(property = "usefee", column = "usefee"),
             @Result(property = "orderid", column = "orderid"),
             @Result(property = "cable", column = "cable"),
-            @Result(property = "borrowStationId", column = "borrow_station_id"),
-
+            @Result(property = "status", column = "status"),
+            @Result(property = "borrowStationId", column = "borrow_station_id")
     })
     Order findOrderByOrderId(String orderid);
 
