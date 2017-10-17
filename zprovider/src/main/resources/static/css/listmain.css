@@ -82,4 +82,12 @@ body {
     font-size: 1.6rem;
     color: #939393;
 }
+.loading {
+    width: 15.4rem;
+    height: 11.8rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
 
