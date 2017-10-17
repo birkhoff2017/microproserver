@@ -13,6 +13,7 @@
         <module>config</module>
         <module>eureka</module>
         <module>zuul</module>
+        <module>aprovider</module>
         <module>provider</module>
         <module>wprovider</module>
         <module>zprovider</module>
