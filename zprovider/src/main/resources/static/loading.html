@@ -31,26 +31,13 @@
                     alert("借用失败");
                     AlipayJSBridge.call('popWindow');
                     return;
-                }
-                if(url_param.indexOf("return_type")<=0){
+                }else if(url_param.indexOf("return_type")<=0){
 					alert("信用借用成功，请等待充电宝弹出，谢谢");
                     AlipayJSBridge.call('popWindow');
                     return;
+				}else {
+                    location.href = "list.html";
 				}
-
-				AlipayJSBridge.call('getCurrentLocation', {
-					bizType: 'didi'
-				}, function(result) {
-					if(result.error) {
-						alert(result.errorMessage);
-						return;
-					}
-					var latitude = result.latitude;
-					var longitude = result.longitude;
-					if(latitude != null && longitude != null) {
-						location.href = "list.html?latitude="+latitude+"&longitude="+longitude;
-					}
-				});
 			});
 		</script>
 	</body>

@@ -1,0 +1,31 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
+html {
+	width: 100%;
+	height: 100%;
+	font-size: 62.5%;
+	color: #222;
+}
+
+body {
+	background-color: #fff;
+}
+.txtHead {
+    display:block;
+    width:94%;
+    color:#0c9;
+    margin:auto;
+    padding-top:2rem;
+    font-weight:bold;
+    font-size:4rem;
+}
+
+.txtContent {
+    display:block;
+    margin:1rem auto;
+    width:94%;
+    font-size:4rem;
+}

@@ -1,0 +1,112 @@
+* {
+	margin:0;padding:0;
+}
+html {
+	width:100%;
+	height:100%;
+    font-size: 62.5%;
+    color: #222;
+}
+body {
+	background-color:#fff;
+}
+
+/*总菜单容器*/
+
+.box {
+    display: flex;
+    justify-content: center;
+}
+
+.page {
+    width: 100%;
+    background-color: #d3d3d3;
+   /* font-size:5rem;*/
+}
+
+.page_bd {
+    margin: 0.5rem 0;
+    background-color: #fff;
+}
+
+.page_bd .listhide {
+    margin-left: 1.5rem;
+}
+
+.page_bd1 {
+    border-bottom: 0.1rem solid #d3d3d3;
+}
+
+.body_show {
+	display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    border: 1px solid;
+    border-color: beige;
+    padding: 2rem 2rem 2rem 0;
+    padding-left: 2.2rem;
+}
+.body_show span {
+	font-size:6rem;
+}
+.body_show .dian {
+    width: 2rem;
+    height: 2rem;
+    display:none;
+}
+
+.look,.pack{
+    width: 4rem;
+    height: 4rem;
+}
+.body_hide {
+	display:none;
+}
+.body_hide .listhide {
+    display: block;
+    border-bottom: 1px solid;
+    border-color: beige;
+    padding: 1rem;
+    font-size:5rem;
+}
+
+.footer-del {
+    width: 100%;
+    height: 10rem;
+    position: fixed;
+    bottom: 15rem;
+    left: 0%;
+    border-radius: 2rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    font-size:5rem;
+}
+
+.footer-del .txtfooter {
+    width: 50rem;
+    line-height: 10rem;
+    background: linear-gradient(to right, #0c9, #44e08c);
+    border-radius: 2rem;
+    text-align: center;
+    color: #fff;
+    font-size:5rem;
+}
+
+.img-service {
+	width:5rem;
+	height:5rem;
+    margin-top: 0rem;
+    margin-right: 1rem;
+    vertical-align: middle;
+}
+
+.footer-img {
+    width: 100%;
+    position: fixed;
+    bottom: -0.5rem;
+    left: 0rem;
+}
+.pack {
+	display:none;
+}
