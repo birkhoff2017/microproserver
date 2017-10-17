@@ -3,14 +3,20 @@ $(function () {
     Request = GetRequest();
     var shop_id = Request['shop_id'];
 
- $.ajax({
-     type: "post",
-     url: urlObject.getShopInfo,
-     data: {
-         shop_id: shop_id
-     },
-     dataType: "json",
-     success: function (data) {
+    var latitude;
+    var longitude;
+    var name;
+
+    $.ajax({
+        type: "post",
+        url: urlObject.getShopInfo,
+        data: {
+            shop_id: shop_id
+        },
+        dataType: "json",
+        success: function (data) {
+            latitude = data.data.shop.latitude;
+            longitude = data.data.shop.longitude;
             var usable = 0;
             var empty = 0;
             name = data.data.shop.name;
@@ -37,25 +43,29 @@ $(function () {
             }
             var canborrow = usable;
             var canReturn = empty;
-            $('.lend').attr('src', "img/list/b/l_"+canborrow+".png");
-            $('.repay').attr('src', "img/list/b/l_"+canReturn+".png");
+            $('.lend').attr('src', "img/list/b/l_" + canborrow + ".png");
+            $('.repay').attr('src', "img/list/b/l_" + canReturn + ".png");
 
             $("#J_btn_scanQR").click(function () {
                 window.alert("请使用支付宝扫一扫，扫描充电柜支付宝二维码");
                 return false;
             });
-            //马上导航
-			$('#M_btn_scanQR').click(function(){
-				location.href = encodeURI(encodeURI("map.html?name="+data.data.shop.name+"&longitude="+data.data.shop.longitude+"&latitude="+data.data.shop.latitude));
-			})
+            // //马上导航
+			// $('#M_btn_scanQR').click(function(){
+			// 	location.href = encodeURI(encodeURI("map.html?name="+data.data.shop.name+"&longitude="+data.data.shop.longitude+"&latitude="+data.data.shop.latitude));
+			// })
      }
  })
     //拨打电话
     var btn = document.querySelector('#contact_phone');
-    btn.addEventListener('click', function(){
+    btn.addEventListener('click', function () {
         ap.makePhoneCall($('#contact_phone').html());
     });
-
+    //马上导航
+    $('#M_btn_scanQR').click(function(){
+        //调用高德地图
+        location.href = 'http://m.amap.com/share/index/__q=' + latitude + ',' + longitude + ',' + name + '&src=jsapi&callapp=0&lnglat=' + longitude + ',' + latitude + '&name=' + name;
+    })
 })
 
 function GetRequest() {
@@ -70,5 +80,4 @@ function GetRequest() {
     }
     return theRequest;
 }
-
 
