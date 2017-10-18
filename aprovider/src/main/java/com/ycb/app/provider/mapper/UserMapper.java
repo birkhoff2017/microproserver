@@ -1,6 +1,7 @@
 package com.ycb.app.provider.mapper;
 
 import com.ycb.app.provider.vo.User;
+import com.ycb.app.provider.vo.UserAuth;
 import com.ycb.app.provider.vo.UserInfo;
 import com.ycb.app.provider.vo.UserInfoVo;
 import org.apache.ibatis.annotations.*;
@@ -21,7 +22,8 @@ public interface UserMapper {
 
     @Insert("Insert INTO ycb_mcs_user(createdBy,createdDate,optlock,openid,platform,usablemoney,deposit,refund,refunded,unsubscribe) " +
             "VALUES(#{createdBy},#{createdDate},#{version},#{openid},#{platform},#{usablemoney},#{deposit},#{refund},#{refunded},0)")
-    void insert(User user);
+    @Options(useGeneratedKeys = true, keyProperty = "id")
+    Long insert(User user);
 
     @Select("SELECT u.id,ui.nickname,u.usablemoney,ui.headimgurl,u.deposit,u.refund FROM ycb_mcs_user u,ycb_mcs_userinfo ui WHERE u.openid=ui.openid AND u.openid = #{openid}")
     UserInfoVo findUserinfo(@Param("openid") String openid);
@@ -60,4 +62,17 @@ public interface UserMapper {
 
     @Update("Update ycb_mcs_user SET lastModifiedBy=#{lastModifiedBy},lastModifiedDate=NOW(),refund=refund+#{refund} WHERE id=#{id}")
     void updateUserRefund(User user);
+
+    @Select("Select u.* from ycb_mcs_user u,ycb_mcs_user_auth a WHERE a.user_id = u.id AND a.identity_type = 4 AND a.identifier = #{mobile}")
+    User findUserByMobile(String mobile);
+
+    @Insert("Insert INTO ycb_mcs_user_auth(createdBy,createdDate,optlock,user_id,identity_type,identifier,credential) " +
+            "VALUES(#{createdBy},#{createdDate},#{version},#{userId},#{identityType},#{identifier},#{credential})")
+    void insertUserAuth(UserAuth userAuth);
+
+    @Update("Update ycb_mcs_user_auth SET lastModifiedBy='SYS:register',lastModifiedDate=NOW() WHERE identity_type = 0 AND identifier = #{mobile}")
+    void updateUserAuth(String mobile);
+
+    @Select("Select * from ycb_mcs_user_auth  WHERE identity_type = 4 AND identifier = #{mobile}")
+    UserAuth findUserAuthByMobile(String mobile);
 }

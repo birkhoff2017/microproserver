@@ -20,6 +20,11 @@ public class RedisService {
     @Autowired
     private RedisTemplate<String, String> template;
 
+    public void setKeyValue(String key, String value) {
+        template.setValueSerializer(new GenericToStringSerializer<>(String.class));
+        template.opsForValue().set(key, value);
+    }
+
     public void setKeyValueTimeout(String key, String value, Long timeout) {
         template.setValueSerializer(new GenericToStringSerializer<>(String.class));
         template.opsForValue().set(key, value, timeout, TimeUnit.SECONDS);

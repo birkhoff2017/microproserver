@@ -9,8 +9,6 @@ public class User extends BaseEntity {
 
     private String openid;
 
-    private String mobile;
-
     // 用户所属平台("0:微信-公众号 1:支付宝 2:芝麻信用 3:微信-小程序")
     private Integer platform = 0;
 
@@ -32,14 +30,6 @@ public class User extends BaseEntity {
 
     public void setOpenid(String openid) {
         this.openid = openid;
-    }
-
-    public String getMobile() {
-        return mobile;
-    }
-
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
     }
 
     public Integer getPlatform() {
