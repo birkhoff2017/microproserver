@@ -40,17 +40,16 @@ $(function() {
 		},
 	})
 });
-$('#look_rent').click(function() {
+function look_rent() {
 	location.href = "rent.html?openid=" + openid;
-});
+};
 
-function goRefund() {
+function go_refund() {
 
     if(usablemoney == 0) {
         layer.open({
             content: '您的账户余额不足不能提现!',
             btn: ['确定']
-
         });
     } else{
         layer.open({
@@ -69,41 +68,19 @@ function goRefund() {
 							layer.open({
 								content: '申请提现失败!',
 								btn: ['确定']
-
 							});
+						}else{
+						    layer.open({
+                                content: '申请提现成功!',
+                                btn: ['确定'],
+                                    yes:function(){
+                                        parent.location.reload();
+                                    }
+                            });
 						}
                     }
                 })
             }
         });
     }
-
-	$.ajax({
-		url: "refund/doRefund",
-		type: "POST",
-		data: {
-			'openid': openid
-		},
-		dataType: "json",
-		success: function(result) {
-
-			if(null != result) {
-				if(result.code == "1") {
-					layer.open({
-						content: '您的账户余额不足不能提现!',
-						btn: ['确定']
-
-					});
-				} else if(result.code == "0"){
-					layer.open({
-						content: '提现到帐时间为0-5个工作日。不提现押金余额，下次使用更快捷。是否继续提现押金余额?',
-						btn: ['确定', '取消']
-						,yes: function(index){
-						
-						}
-					});
-				}
-			}
-		}
-	})
 }
