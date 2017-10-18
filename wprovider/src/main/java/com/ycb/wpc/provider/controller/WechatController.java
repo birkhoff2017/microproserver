@@ -22,7 +22,7 @@ import java.util.Map;
 
 /**
  * 微信开发
- *
+ * <p>
  * Created by Bruce on 2017/9/28.
  */
 @RestController
@@ -61,8 +61,8 @@ public class WechatController {
      */
     @RequestMapping(value = "/wechat", method = RequestMethod.GET)
     @ResponseBody
-    public String query(@RequestParam("signature") String signature,@RequestParam("timestamp") String timestamp,
-                      @RequestParam("nonce") String nonce,@RequestParam("echostr") String echostr) {
+    public String query(@RequestParam("signature") String signature, @RequestParam("timestamp") String timestamp,
+                        @RequestParam("nonce") String nonce, @RequestParam("echostr") String echostr) {
         logger.info("signature：" + signature + "\ntimestamp：" + timestamp + "\nnonce：" + nonce + "\nechostr：" + echostr);
         if (WeixinUtil.validate(signature, timestamp, nonce)) {
             logger.info("验证token成功：signature");
@@ -81,7 +81,7 @@ public class WechatController {
     @RequestMapping(value = "/wechat", method = RequestMethod.POST)
     @ResponseBody
     public void saveUser(HttpServletRequest request, HttpServletResponse response,
-                           @RequestParam("timestamp") String timestamp) throws Throwable{
+                         @RequestParam("timestamp") String timestamp) throws Throwable {
         Map<String, Object> bacMap = new HashMap<>();
         PrintWriter out = response.getWriter();
         try {
@@ -111,18 +111,19 @@ public class WechatController {
             out.print(s);
             out.flush();
             out.close();
-        } catch(Exception e){
-            logger.error(e.getMessage());
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
         }
         out.print("success");
     }
+
     @RequestMapping(value = "/createMenu", method = RequestMethod.GET)
     @ResponseBody
-    public void createMenu(){
-        try{
+    public void createMenu() {
+        try {
             this.menuService.createMenu();
-        }catch (Exception e){
-            logger.error(e.getMessage());
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
         }
     }
 }

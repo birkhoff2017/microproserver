@@ -8,7 +8,6 @@ import com.ycb.wpc.provider.mapper.RefundMapper;
 import com.ycb.wpc.provider.utils.HttpRequest;
 import com.ycb.wpc.provider.utils.JsonUtils;
 import com.ycb.wpc.provider.utils.MD5;
-import com.ycb.wpc.provider.utils.WeixinUtil;
 import com.ycb.wpc.provider.vo.Refund;
 import com.ycb.wpc.provider.vo.TradeLog;
 import com.ycb.wpc.provider.vo.WechatTemplateMsg;
@@ -56,7 +55,7 @@ public class MessageService {
     /**
      * 获取access_token
      *
-     * @param appID 凭证
+     * @param appID     凭证
      * @param appSecret 密钥
      * @return
      */
@@ -64,7 +63,7 @@ public class MessageService {
         String param = "grant_type=client_credential&appid=" + appID + "&secret=" + appSecret;
         try {
             String accessToken = redisService.getKeyValue(MD5.getMessageDigest(appID.getBytes()));
-            if (org.apache.commons.lang.StringUtils.isBlank(accessToken)){
+            if (org.apache.commons.lang.StringUtils.isBlank(accessToken)) {
                 String tokenInfo = HttpRequest.sendGet(GlobalConfig.WX_ACCESS_TOKEN_URL, param);
                 Map<String, Object> tokenInfoMap = JsonUtils.readValue(tokenInfo);
                 accessToken = tokenInfoMap.get("access_token").toString();
@@ -72,7 +71,7 @@ public class MessageService {
             }
             return accessToken;
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
             return null;
         }
     }
@@ -84,16 +83,17 @@ public class MessageService {
         WechatTemplateMsg wechatTemplateMsg = new WechatTemplateMsg();
         wechatTemplateMsg.setTemplate_id(templateid);
         wechatTemplateMsg.setTouser(openid);
-        wechatTemplateMsg.setUrl(redirect_uri+"depositrecord.html?openid="+openid);
+        wechatTemplateMsg.setUrl(redirect_uri + "depositrecord.html?openid=" + openid);
         TreeMap<String, TreeMap<String, String>> params = new TreeMap<String, TreeMap<String, String>>();
         params.put("first", WechatTemplateMsg.item("您好，您已发起提现申请！", "#000000")); //提现金额
-        params.put("keyword1", WechatTemplateMsg.item(usablemoney.toString()+ "元", "#000000"));
+        params.put("keyword1", WechatTemplateMsg.item(usablemoney.toString() + "元", "#000000"));
         params.put("keyword2", WechatTemplateMsg.item(new Date().toString(), "#000000")); //提现时间
         params.put("remark", WechatTemplateMsg.item("您好！发起提现后，项款将原路返回您原支付账户", "#00FF7F")); //温馨提示
         wechatTemplateMsg.setData(params);
         String data = JsonUtils.writeValueAsString(wechatTemplateMsg);
         this.sendMessage(data);
     }
+
     //租借成功 推送消息
     public void borrowSendTemplate(String openid, String templateid, String srOpenid) {
 
@@ -102,7 +102,7 @@ public class MessageService {
         WechatTemplateMsg wechatTemplateMsg = new WechatTemplateMsg();
         wechatTemplateMsg.setTemplate_id("11");
         wechatTemplateMsg.setTouser(openid);
-        wechatTemplateMsg.setUrl(redirect_uri+"/rent.html?openid="+openid);
+        wechatTemplateMsg.setUrl(redirect_uri + "/rent.html?openid=" + openid);
         TreeMap<String, TreeMap<String, String>> params = new TreeMap<String, TreeMap<String, String>>();
         params.put("first", WechatTemplateMsg.item("设备已租借成功！", "#000000"));
         params.put("keyword1", WechatTemplateMsg.item(tradeLog.getBorrowStationId(), "#000000"));
@@ -114,6 +114,7 @@ public class MessageService {
         String data = JsonUtils.writeValueAsString(wechatTemplateMsg);
         this.sendMessage(data);
     }
+
     //归还 推送消息
     public void returnSendTemplate(String openid, String templateid, String srOpenid) {
 
@@ -123,7 +124,7 @@ public class MessageService {
         WechatTemplateMsg wechatTemplateMsg = new WechatTemplateMsg();
         wechatTemplateMsg.setTemplate_id("11");
         wechatTemplateMsg.setTouser(openid);
-        wechatTemplateMsg.setUrl(redirect_uri+"/deposit.html?openid="+openid);
+        wechatTemplateMsg.setUrl(redirect_uri + "/deposit.html?openid=" + openid);
         TreeMap<String, TreeMap<String, String>> params = new TreeMap<String, TreeMap<String, String>>();
         params.put("first", WechatTemplateMsg.item("您好，您租借的充电宝已经成功归还。", "#000000"));
         params.put("keynote1", WechatTemplateMsg.item(tradeLog.getBorrowTime(), "#000000"));
@@ -136,6 +137,7 @@ public class MessageService {
         String data = JsonUtils.writeValueAsString(wechatTemplateMsg);
         this.sendMessage(data);
     }
+
     //超时 推送消息
     public void overtimeSendTemplate(String openid, String templateid, Long refundId) {
         //查询提现记录
@@ -144,26 +146,26 @@ public class MessageService {
         WechatTemplateMsg wechatTemplateMsg = new WechatTemplateMsg();
         wechatTemplateMsg.setTemplate_id("11");
         wechatTemplateMsg.setTouser(openid);
-        wechatTemplateMsg.setUrl("http://www.wangrulin.top/depositrecord.html?openid="+openid);
+        wechatTemplateMsg.setUrl("http://www.wangrulin.top/depositrecord.html?openid=" + openid);
         String requestTime = refund.getRequestTime();
         TreeMap<String, TreeMap<String, String>> params = new TreeMap<String, TreeMap<String, String>>();
         params.put("first", WechatTemplateMsg.item("提现申请通知", "#000000"));
         params.put("keynote1", WechatTemplateMsg.item("您好，您已发起提现申请！", "#000000")); //提现金额
-        params.put("keynote2", WechatTemplateMsg.item("提现金额："+refund.getRefund().toString() + "元", "#000000"));
-        params.put("keynote3", WechatTemplateMsg.item("发起时间："+requestTime.substring(0, requestTime.length() - 2), "#000000")); //提现时间
+        params.put("keynote2", WechatTemplateMsg.item("提现金额：" + refund.getRefund().toString() + "元", "#000000"));
+        params.put("keynote3", WechatTemplateMsg.item("发起时间：" + requestTime.substring(0, requestTime.length() - 2), "#000000")); //提现时间
         params.put("keynote4", WechatTemplateMsg.item("您好！发起提现后，项款将原路返回您原支付账户", "#000000")); //温馨提示
         wechatTemplateMsg.setData(params);
         String data = JsonUtils.writeValueAsString(wechatTemplateMsg);
         this.sendMessage(data);
     }
 
-    private void sendMessage(String data){
+    private void sendMessage(String data) {
         try {
             String accessToken = getAccessToken(appID, appSecret);
             String msgUrl = GlobalConfig.WX_SEND_TEMPLATE_MESSAGE + "?access_token=" + accessToken;
             String msgResult = HttpRequest.sendPost(msgUrl, data);  //发送post请求
             if (StringUtils.isEmpty(msgResult)) {
-                logger.info("模板消息发送失败" );
+                logger.info("模板消息发送失败");
             } else {
                 Map<String, Object> msgResultMap = JsonUtils.readValue(msgResult);
                 Integer errcode = (Integer) msgResultMap.get("errcode");

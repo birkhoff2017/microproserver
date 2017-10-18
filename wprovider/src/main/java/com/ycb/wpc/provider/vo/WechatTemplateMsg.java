@@ -59,6 +59,7 @@ public class WechatTemplateMsg {
 
     /**
      * 参数
+     *
      * @param value
      * @param color 可不填
      * @return

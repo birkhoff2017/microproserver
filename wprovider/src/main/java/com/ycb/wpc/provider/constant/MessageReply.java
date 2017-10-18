@@ -2,7 +2,7 @@ package com.ycb.wpc.provider.constant;
 
 /**
  * 用户与公众号交互返回给用户的消息模板
- *
+ * <p>
  * Created by Bruce on 2017/10/13 .
  */
 public class MessageReply {

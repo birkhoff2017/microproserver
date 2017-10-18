@@ -33,7 +33,7 @@ public class SocketService {
             out.flush();
         } catch (Exception e) {
             e.printStackTrace();
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
         } finally {
             socket.close();
             logger.info(cmd);

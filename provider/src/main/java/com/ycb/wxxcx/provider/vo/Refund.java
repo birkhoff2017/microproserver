@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 /**
  * Created by 杜欣源 on 2017/8/5.
  */
-public class Refund extends BaseEntity{
+public class Refund extends BaseEntity {
 
     //用户编号
     private Long uid;
@@ -23,7 +23,7 @@ public class Refund extends BaseEntity{
     private String requestTime;
 
     //提现时间
-    private String refundTime="";
+    private String refundTime = "";
 
     //退款描述
     private String detail;

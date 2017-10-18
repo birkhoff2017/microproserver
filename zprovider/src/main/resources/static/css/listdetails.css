@@ -1,9 +1,11 @@
 * {
-	margin:0;padding:0;
+    margin: 0;
+    padding: 0;
 }
+
 html {
-	width:100%;
-	height:100%;
+    width: 100%;
+    height: 100%;
     font-size: 62.5%;
     color: #222;
 }
@@ -15,10 +17,10 @@ html {
 
 .details_content {
     width: 85%;
-    height:70%;
+    height: 70%;
     margin: 0 auto;
     padding-top: 20rem;
-  
+
 }
 
 .shop_name {
@@ -36,7 +38,7 @@ html {
     align-items: center;
     padding-bottom: 1.5rem;
     border-bottom: 1px solid #0c9;
-    font-size:1.6rem;
+    font-size: 1.6rem;
 }
 
 .borrow img {
@@ -54,7 +56,7 @@ html {
 .viewV {
     background-color: #fff;
     margin-top: 1.5rem;
-    font-size:1.6rem;
+    font-size: 1.6rem;
 }
 
 .viewV .bottomtype {
@@ -108,15 +110,16 @@ html {
     color: #fff;
     font-size: 2rem;
     border-radius: 4rem;
-    text-align:center;
+    text-align: center;
 }
 
 .button-hover {
     background: #808080;
 }
+
 /*#M_btn_scanQR {*/
-	/*text-align: center;*/
+/*text-align: center;*/
 /*}*/
 /*#J_btn_scanQR {*/
-    /*text-align:center;*/
+/*text-align:center;*/
 /*}*/

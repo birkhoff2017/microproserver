@@ -18,7 +18,7 @@ import java.util.Map;
 
 /**
  * 云账户
- *
+ * <p>
  * Created by Bruce on 2017/10/9
  */
 @RestController
@@ -50,11 +50,11 @@ public class CloudAccountController {
 
         try {
             String openid = this.redisService.getKeyValue(MD5.getMessageDigest(code.getBytes()));
-            if (StringUtils.isBlank(openid)){
-                String param = "appid="+appID+"&secret="+appSecret+"&code="+code+"&grant_type=authorization_code ";
+            if (StringUtils.isBlank(openid)) {
+                String param = "appid=" + appID + "&secret=" + appSecret + "&code=" + code + "&grant_type=authorization_code ";
                 String requestStr = HttpRequest.sendGet(GlobalConfig.WX_AUTH2_URL, param);
                 Map<String, Object> requestMap = JsonUtils.readValue(requestStr);
-                openid = (String)requestMap.get("openid");
+                openid = (String) requestMap.get("openid");
                 this.redisService.setKeyValueTimeout(MD5.getMessageDigest(code.getBytes()), openid, Long.valueOf(expiresIn));
             }
             UserInfoVo userInfoVo = this.userMapper.findUserinfo(openid);

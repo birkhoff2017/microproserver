@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Created by zhuhui on 17-7-27.
  */
-public class Shop extends BaseEntity{
+public class Shop extends BaseEntity {
 
     // 店铺名
     private String name;
@@ -30,13 +30,21 @@ public class Shop extends BaseEntity{
         this.name = name;
     }
 
-    public BigDecimal getDefaultPay(){return defaultPay; }
+    public BigDecimal getDefaultPay() {
+        return defaultPay;
+    }
 
-    public void setDefaultPay(){this.defaultPay = defaultPay; }
+    public void setDefaultPay() {
+        this.defaultPay = defaultPay;
+    }
 
-    public BigDecimal getAtLeatValue(){return atLeatValue; }
+    public BigDecimal getAtLeatValue() {
+        return atLeatValue;
+    }
 
-    public void setAtLeatValue(BigDecimal atLeatValue){this.atLeatValue = atLeatValue; }
+    public void setAtLeatValue(BigDecimal atLeatValue) {
+        this.atLeatValue = atLeatValue;
+    }
 
     public List<Station> getStationList() {
         return stationList;

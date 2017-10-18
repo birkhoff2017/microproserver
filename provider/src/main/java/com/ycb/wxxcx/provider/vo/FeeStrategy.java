@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 /**
  * Created by duxinyuan on 17-6-27.
  */
-public class FeeStrategy extends BaseEntity{
+public class FeeStrategy extends BaseEntity {
 
     //@MetaData("策略名称")
     private String name;

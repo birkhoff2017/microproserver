@@ -63,14 +63,14 @@ public class OrderController {
             }
             tradeLog.setFeeStrategy(feeStrategyService.transFeeStrategy(feeStrategyEntity));
             //如果是进行着的订单，数据库中的useFee为空，需要自己计算
-            tradeLog.setUseFee(feeStrategyService.calUseFee(tradeLog.getFeeStrategyEntity(),tradeLog.getDuration(),tradeLog.getStatus(),tradeLog.getUseFee()));
+            tradeLog.setUseFee(feeStrategyService.calUseFee(tradeLog.getFeeStrategyEntity(), tradeLog.getDuration(), tradeLog.getStatus(), tradeLog.getUseFee()));
             Map<String, Object> data = new HashMap<>();
             data.put("order", tradeLog);
             bacMap.put("data", data);
             bacMap.put("code", 0);
             bacMap.put("msg", "成功");
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
             bacMap.put("data", null);
             bacMap.put("code", 1);
             bacMap.put("msg", "失败");
@@ -107,7 +107,7 @@ public class OrderController {
                 bacMap.put("msg", "用户暂无租借记录");
             }
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
             bacMap.put("data", null);
             bacMap.put("code", 1);
             bacMap.put("msg", "获取数据失败");
@@ -140,7 +140,7 @@ public class OrderController {
             bacMap.put("code", 0);
             bacMap.put("msg", "成功");
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
             bacMap.put("data", null);
             bacMap.put("code", 1);
             bacMap.put("msg", "获取数据失败");

@@ -112,7 +112,7 @@ public class UserController {
                 bacMap.put("msg", "成功");
             }
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
             bacMap.put("data", null);
             bacMap.put("code", 1);
             bacMap.put("msg", "失败");

@@ -72,13 +72,14 @@ public class RefundController {
             bacMap.put("code", 0);
             bacMap.put("msg", "成功");
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
             bacMap.put("data", null);
             bacMap.put("code", 1);
             bacMap.put("msg", "获取数据失败");
         }
         return JsonUtils.writeValueAsString(bacMap);
     }
+
     // 获取提现记录列表
     @RequestMapping(value = "/getRefundList", method = RequestMethod.POST)
     @ResponseBody
@@ -94,7 +95,7 @@ public class RefundController {
             bacMap.put("code", 0);
             bacMap.put("msg", "成功");
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
             bacMap.put("data", null);
             bacMap.put("code", 1);
             bacMap.put("msg", "获取数据失败");
@@ -192,14 +193,13 @@ public class RefundController {
                             this.orderMapper.updateOrderStatusToFour(order);
 
 
-
                             bacMap.put("code", 0);
                             bacMap.put("msg", "退款成功");
                             bacMap.put("errcode", 0);
                             bacMap.put("errmsg", "退款成功");
                         } else {
                             String return_msg = (String) map.get("return_msg");
-                            logger.error("退款失败 退款编号："+ newRefund.getId()+"描述:"+return_msg);
+                            logger.error("退款失败 退款编号：" + newRefund.getId() + "描述:" + return_msg);
                             bacMap.put("code", 5);
                             bacMap.put("msg", "退款失败，返回结果有误");
                             bacMap.put("errcode", 5);
@@ -214,7 +214,7 @@ public class RefundController {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    logger.error("异常退款编号："+ newRefund.getId());
+                    logger.error("异常退款编号：" + newRefund.getId());
                     bacMap.put("code", 3);
                     bacMap.put("msg", "退款失败（系统有异常）");
                     bacMap.put("errcode", 3);
@@ -224,7 +224,7 @@ public class RefundController {
             }
         }
         //推送提现申请消息
-        this.messageService.refundSendTemplate(openid,refundSendTemplateId, refundMoney);
+        this.messageService.refundSendTemplate(openid, refundSendTemplateId, refundMoney);
         return JsonUtils.writeValueAsString(bacMap);
     }
 
@@ -248,7 +248,7 @@ public class RefundController {
                 String req_info = (String) map.get("req_info"); //加密信息
 
                 //解密数据
-                Map<String, Object> refundMap = HttpRequest.getRefundInfo(req_info,key);
+                Map<String, Object> refundMap = HttpRequest.getRefundInfo(req_info, key);
 
                 String outTradeNo = (String) refundMap.get("out_trade_no");
                 String outRefundNo = (String) refundMap.get("out_refund_no");
@@ -256,7 +256,7 @@ public class RefundController {
 
                 Long refundId = Long.valueOf(outRefundNo);
                 Refund ref = this.refundMapper.findRefundByRefundId(refundId);
-                if (null == ref){
+                if (null == ref) {
                     // 数据库里没有这条退款记录 有可能是深圳那边的数据
                     return WXPayUtil.setXML("SUCCESS", "OK");
                 }
@@ -272,13 +272,13 @@ public class RefundController {
 
                     logger.info("REFUNDID:" + outRefundNo + "退款到账成功！");
 
-                }else if ("CHANGE".equalsIgnoreCase(refundStatus.toString())){
+                } else if ("CHANGE".equalsIgnoreCase(refundStatus.toString())) {
                     //退款异常
                     refund.setDetail("微信向用户退款异常");
                     this.refundMapper.updateRefundDetail(refund);
                     logger.info("REFUNDID:" + outRefundNo + "退款异常！");
 
-                }else if ("REFUNDCLOSE".equalsIgnoreCase(refundStatus.toString())){
+                } else if ("REFUNDCLOSE".equalsIgnoreCase(refundStatus.toString())) {
                     //退款关闭
                     refund.setDetail("微信向用户退款关闭");
                     this.refundMapper.updateRefundDetail(refund);

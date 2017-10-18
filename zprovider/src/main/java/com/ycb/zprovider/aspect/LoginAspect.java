@@ -44,7 +44,7 @@ public class LoginAspect {
             logger.info("arg: " + arg);
         }
         String session = (String) args[0];
-        if (StringUtils.isEmpty(operations.get(session))){
+        if (StringUtils.isEmpty(operations.get(session))) {
             // 如果session失效  直接返回错误code
         }
     }

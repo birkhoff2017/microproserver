@@ -36,10 +36,11 @@ public class AlipayOrderService {
     /**
      * 创建未付费订单的方法
      * 当用户扫码后，就生成预付费订单，然后再向支付宝申请生成支付宝的信用借还订单
-     * @param outOrderNo    商户的订单编号
-     * @param sid   设备的编号
-     * @param cableType 充电宝线的类型
-     * @param session   用户的标识，在redis中的key,用于从redis中获取到用户的编号
+     *
+     * @param outOrderNo 商户的订单编号
+     * @param sid        设备的编号
+     * @param cableType  充电宝线的类型
+     * @param session    用户的标识，在redis中的key,用于从redis中获取到用户的编号
      */
     public void createPreOrder(String outOrderNo, String sid, String cableType, String session) {
         //根据session从redis中查询用户的open_id

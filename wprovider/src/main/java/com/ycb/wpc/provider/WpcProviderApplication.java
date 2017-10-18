@@ -9,9 +9,9 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  */
 @SpringBootApplication
 @EnableDiscoveryClient
-public class ProviderApplication {
+public class WpcProviderApplication {
     public static void main(String[] args) {
-        SpringApplication application = new SpringApplication(ProviderApplication.class);
+        SpringApplication application = new SpringApplication(WpcProviderApplication.class);
         application.run(args);
     }
 }

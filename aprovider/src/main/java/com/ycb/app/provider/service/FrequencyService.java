@@ -32,16 +32,16 @@ public class FrequencyService {
             Frequency frequency = this.frequencyMapper.findFrequency();
             //检索用户正在使用电池数量
             Integer useNum = this.orderMapper.findUserUseBatteryNum(user);
-            if (useNum < frequency.getBatteryNum()){ //正在使用的电池数量小于3块
+            if (useNum < frequency.getBatteryNum()) { //正在使用的电池数量小于3块
                 //检索用户当日订单数量
                 Integer orderNum = this.orderMapper.findUserOrderNum(user);
-                if (orderNum < frequency.getOrderNum()){ //当日租借成功订单数量小于10个
+                if (orderNum < frequency.getOrderNum()) { //当日租借成功订单数量小于10个
                     //可以租借
                     return true;
                 }
             }
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
         }
         return false;
     }

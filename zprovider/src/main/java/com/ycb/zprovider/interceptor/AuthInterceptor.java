@@ -25,7 +25,7 @@ public class AuthInterceptor extends WebMvcConfigurerAdapter {
                 .excludePathPatterns("/shop/getShopList")
                 .excludePathPatterns("/shop/getShopInfo")
                 .excludePathPatterns("/gateway/notify");
-                //开发环境中注释掉，拦截器不起作用，方便开发，
-                // super.addInterceptors(registry);
+        //开发环境中注释掉，拦截器不起作用，方便开发，
+        // super.addInterceptors(registry);
     }
 }

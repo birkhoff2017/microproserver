@@ -48,9 +48,10 @@ public class CreditMachineInfoController {
     private ShopMapper shopMapper;
 
     /**
-     *根据设备的sid查询设备的信息
-     * @param session   用户session
-     * @param sid       设备sid
+     * 根据设备的sid查询设备的信息
+     *
+     * @param session 用户session
+     * @param sid     设备sid
      */
     @RequestMapping(value = "/getMachineInfo", method = RequestMethod.POST)
     @ResponseBody
@@ -85,7 +86,7 @@ public class CreditMachineInfoController {
             bacMap.put("code", 0);
             bacMap.put("msg", "成功");
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
             bacMap.put("data", null);
             bacMap.put("code", 5);
             bacMap.put("msg", "session过期");

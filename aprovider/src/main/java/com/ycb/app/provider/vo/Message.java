@@ -3,7 +3,7 @@ package com.ycb.app.provider.vo;
 /**
  * Created by duxinyuan on 2017/8/28.
  */
-public class Message extends BaseEntity{
+public class Message extends BaseEntity {
 
     //凭证有效期，单位：秒
     private Integer expiresIn;

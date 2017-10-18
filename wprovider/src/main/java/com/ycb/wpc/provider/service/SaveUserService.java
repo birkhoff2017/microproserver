@@ -70,13 +70,13 @@ public class SaveUserService {
                 userInfo.setCreatedBy("User:subscribe");
                 userInfo.setCreatedDate(new Date());
                 this.userMapper.insertUserInfo(userInfo);
-            }else {
+            } else {
                 optlock++;
                 this.userMapper.update(optlock, new Date(), openid);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
         }
     }
 }

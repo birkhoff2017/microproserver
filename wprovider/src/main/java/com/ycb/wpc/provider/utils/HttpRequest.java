@@ -121,7 +121,7 @@ public class HttpRequest {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            logger.error("发送 POST 请求出现异常！"+ e);
+            logger.error("发送 POST 请求出现异常！" + e);
         }
         //使用finally块来关闭输出流、输入流
         finally {

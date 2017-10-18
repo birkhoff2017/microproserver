@@ -55,7 +55,7 @@ public class MessageService {
                 redisService.setKeyValueTimeout("ACCESS_TOKEN", accessToken.trim(), expiresIn);
                 return accessToken.trim();
             } catch (Exception e) {
-                logger.error(e.getMessage());
+                logger.error(e.getMessage(), e);
                 return null;
             }
         } else {

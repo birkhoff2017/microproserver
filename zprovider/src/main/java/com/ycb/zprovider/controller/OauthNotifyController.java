@@ -44,7 +44,7 @@ public class OauthNotifyController {
 
     // 支付宝授权回调页面
     @RequestMapping(value = "/oauthNotify", method = RequestMethod.GET)
-    public void oauthNotify(HttpServletRequest request, HttpServletResponse response) throws Exception{
+    public void oauthNotify(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         String stationId = request.getParameter("state");
         String auth_code = request.getParameter("auth_code");
@@ -63,7 +63,7 @@ public class OauthNotifyController {
             redisService.setKeyValueTimeout(session, alipayUserId, 7200);
 
             //判断stationId是否为空 如果空 说明是用户中心里面的授权，不为空则是扫码租借时的授权
-            if (StringUtils.isEmpty(stationId)){
+            if (StringUtils.isEmpty(stationId)) {
                 Integer optlock = this.userMapper.findByOpenid(alipayUserId);
                 if (optlock == null) {
                     User user = new User();
@@ -76,14 +76,14 @@ public class OauthNotifyController {
                     user.setCreatedBy("SYS:login");
                     user.setCreatedDate(new Date());
                     this.userMapper.insert(user);
-                }else {
+                } else {
                     optlock++;
                     this.userMapper.update(optlock, new Date(), alipayUserId);
                 }
                 //跳转到用户中心
                 response.sendRedirect(GlobalConfig.Z_GATEWAY_URL + "user.html?session=" + session);
 
-            }else {
+            } else {
                 Integer optlock = this.userMapper.findByOpenid(alipayUserId);
                 if (optlock == null) {
                     User user = new User();
@@ -106,7 +106,7 @@ public class OauthNotifyController {
                     String url = GlobalConfig.Z_ATTENTION_URI;
                     response.sendRedirect(url);
 
-                }else {
+                } else {
                     optlock++;
                     this.userMapper.update(optlock, new Date(), alipayUserId);
                     response.sendRedirect(GlobalConfig.Z_GATEWAY_URL + "borrow.html?sid=" + stationId + "&session=" + session);
@@ -123,7 +123,7 @@ public class OauthNotifyController {
         String url = GlobalConfig.ZFB_SEND_AUTH_URL +
                 "app_id=" + appId +
                 "&scope=auth_base" +
-                "&redirect_uri="+ GlobalConfig.Z_AOUTH_REDIRECT_URI;
+                "&redirect_uri=" + GlobalConfig.Z_AOUTH_REDIRECT_URI;
         try {
             response.sendRedirect(url);
         } catch (IOException e) {

@@ -32,7 +32,7 @@ public class RedisService {
         return template.opsForValue().get(key);
     }
 
-    public void deleteKey(String key){
+    public void deleteKey(String key) {
         template.delete(key);
     }
 }

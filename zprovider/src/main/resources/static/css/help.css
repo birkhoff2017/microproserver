@@ -1,14 +1,17 @@
 * {
-	margin:0;padding:0;
+    margin: 0;
+    padding: 0;
 }
+
 html {
-	width:100%;
-	height:100%;
+    width: 100%;
+    height: 100%;
     font-size: 62.5%;
     color: #222;
 }
+
 body {
-	background-color:#fff;
+    background-color: #fff;
 }
 
 /*总菜单容器*/
@@ -21,7 +24,7 @@ body {
 .page {
     width: 100%;
     background-color: #d3d3d3;
-   /* font-size:5rem;*/
+    /* font-size:5rem;*/
 }
 
 .page_bd {
@@ -38,7 +41,7 @@ body {
 }
 
 .body_show {
-	display: flex;
+    display: flex;
     flex-direction: row;
     justify-content: space-between;
     border: 1px solid;
@@ -46,28 +49,32 @@ body {
     padding: 2rem 2rem 2rem 0;
     padding-left: 2.2rem;
 }
+
 .body_show span {
-	font-size:6rem;
+    font-size: 6rem;
 }
+
 .body_show .dian {
     width: 2rem;
     height: 2rem;
-    display:none;
+    display: none;
 }
 
-.look,.pack{
+.look, .pack {
     width: 4rem;
     height: 4rem;
 }
+
 .body_hide {
-	display:none;
+    display: none;
 }
+
 .body_hide .listhide {
     display: block;
     border-bottom: 1px solid;
     border-color: beige;
     padding: 1rem;
-    font-size:5rem;
+    font-size: 5rem;
 }
 
 .footer-del {
@@ -80,7 +87,7 @@ body {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    font-size:5rem;
+    font-size: 5rem;
 }
 
 .footer-del .txtfooter {
@@ -90,12 +97,12 @@ body {
     border-radius: 2rem;
     text-align: center;
     color: #fff;
-    font-size:5rem;
+    font-size: 5rem;
 }
 
 .img-service {
-	width:5rem;
-	height:5rem;
+    width: 5rem;
+    height: 5rem;
     margin-top: 0rem;
     margin-right: 1rem;
     vertical-align: middle;
@@ -107,6 +114,7 @@ body {
     bottom: -0.5rem;
     left: 0rem;
 }
+
 .pack {
-	display:none;
+    display: none;
 }

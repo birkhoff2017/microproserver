@@ -32,10 +32,10 @@ public class FormIdController {
     @RequestMapping(value = "/submitFormId", method = RequestMethod.POST)
     @ResponseBody
     public String submitFormId(@RequestParam("session") String session,
-                        @RequestParam("form_id") String formid) {
+                               @RequestParam("form_id") String formid) {
 
         Map<String, Object> bacMap = new HashMap<>();
-        if (StringUtils.isEmpty(session) || StringUtils.isEmpty(formid)){
+        if (StringUtils.isEmpty(session) || StringUtils.isEmpty(formid)) {
             bacMap.put("form_id", null);
             bacMap.put("code", 2);
             bacMap.put("msg", "参数有误");
@@ -43,7 +43,7 @@ public class FormIdController {
         }
         try {
             String openid = redisService.getKeyValue(session);
-            if (!StringUtils.isEmpty(openid)){
+            if (!StringUtils.isEmpty(openid)) {
                 //持久化form_id
                 Message message = new Message();
                 message.setOpenid(openid);
@@ -56,13 +56,13 @@ public class FormIdController {
                 bacMap.put("form_id", formid);
                 bacMap.put("code", 0);
                 bacMap.put("msg", "成功");
-            }else {
+            } else {
                 bacMap.put("form_id", null);
                 bacMap.put("code", 1);
                 bacMap.put("msg", "openid有误");
             }
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
             bacMap.put("form_id", null);
             bacMap.put("code", 3);
             bacMap.put("msg", "系统异常");

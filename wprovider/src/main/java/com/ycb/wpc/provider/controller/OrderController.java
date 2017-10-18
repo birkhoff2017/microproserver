@@ -67,7 +67,7 @@ public class OrderController {
             bacMap.put("code", 0);
             bacMap.put("msg", "成功");
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
             bacMap.put("data", null);
             bacMap.put("code", 1);
             bacMap.put("msg", "失败");
@@ -104,7 +104,7 @@ public class OrderController {
                 bacMap.put("msg", "用户暂无租借记录");
             }
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
             bacMap.put("data", null);
             bacMap.put("code", 1);
             bacMap.put("msg", "获取数据失败");
@@ -135,7 +135,7 @@ public class OrderController {
             bacMap.put("code", 0);
             bacMap.put("msg", "成功");
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
             bacMap.put("data", null);
             bacMap.put("code", 1);
             bacMap.put("msg", "获取数据失败");

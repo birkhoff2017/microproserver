@@ -27,10 +27,10 @@ public class ShopController {
     // 获取商铺列表
     @RequestMapping(value = "/getShopList", method = RequestMethod.POST)
     public String queryShopList(@RequestParam("latitude") String latitude,
-                        @RequestParam("longitude") String longitude) {
+                                @RequestParam("longitude") String longitude) {
         Map<String, Object> bacMap = new HashMap<>();
         try {
-            List<ShopStation> shopList =  this.shopMapper.findShops(latitude, longitude);
+            List<ShopStation> shopList = this.shopMapper.findShops(latitude, longitude);
             Map<String, Object> data = new HashMap<>();
             data.put("shops", shopList);
             bacMap.put("data", data);
@@ -38,7 +38,7 @@ public class ShopController {
             bacMap.put("msg", "成功");
             // 根据openid检索数据库，不存在新建用户
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
             bacMap.put("data", null);
             bacMap.put("code", 0);
             bacMap.put("msg", "失败");
@@ -52,14 +52,14 @@ public class ShopController {
     public String queryShopByShopID(@RequestParam("shop_id") Long shopid) {
         Map<String, Object> bacMap = new HashMap<>();
         try {
-            ShopStation shop =  this.shopMapper.findShopInfo(shopid);
+            ShopStation shop = this.shopMapper.findShopInfo(shopid);
             Map<String, Object> data = new HashMap<>();
             data.put("shop", shop);
             bacMap.put("data", data);
             bacMap.put("code", 0);
             bacMap.put("msg", "成功");
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
             bacMap.put("data", null);
             bacMap.put("code", 0);
             bacMap.put("msg", "失败");

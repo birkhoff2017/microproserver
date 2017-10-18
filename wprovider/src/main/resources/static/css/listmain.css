@@ -1,25 +1,29 @@
 * {
-	margin:0;padding:0;
+    margin: 0;
+    padding: 0;
 }
+
 html {
-	width:100%;
-	height:100%;
+    width: 100%;
+    height: 100%;
     font-size: 62.5%;
     color: #222;
 }
+
 body {
-	background-color:#ccc;
+    background-color: #ccc;
 }
+
 .viewH {
     padding: 1rem 0.5rem;
     position: relative;
     display: flex;
     align-items: center;
-    background-color:#fff;
+    background-color: #fff;
 }
 
 .viewH img {
-    margin-left:1.5rem;
+    margin-left: 1.5rem;
 }
 
 .viewV {

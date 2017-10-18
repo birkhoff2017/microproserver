@@ -51,18 +51,18 @@ $(function () {
                 return false;
             });
             // //马上导航
-			// $('#M_btn_scanQR').click(function(){
-			// 	location.href = encodeURI(encodeURI("map.html?name="+data.data.shop.name+"&longitude="+data.data.shop.longitude+"&latitude="+data.data.shop.latitude));
-			// })
-     }
- })
+            // $('#M_btn_scanQR').click(function(){
+            // 	location.href = encodeURI(encodeURI("map.html?name="+data.data.shop.name+"&longitude="+data.data.shop.longitude+"&latitude="+data.data.shop.latitude));
+            // })
+        }
+    })
     //拨打电话
     var btn = document.querySelector('#contact_phone');
     btn.addEventListener('click', function () {
         ap.makePhoneCall($('#contact_phone').html());
     });
     //马上导航
-    $('#M_btn_scanQR').click(function(){
+    $('#M_btn_scanQR').click(function () {
         //调用高德地图
         location.href = 'http://m.amap.com/share/index/__q=' + latitude + ',' + longitude + ',' + name + '&src=jsapi&callapp=0&lnglat=' + longitude + ',' + latitude + '&name=' + name;
     })

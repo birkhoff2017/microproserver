@@ -20,7 +20,7 @@ public class UserInfoVo {
     private String headimgurl;
 
     //用户openid
-    private String  openid;
+    private String openid;
 
     public Long getId() {
         return id;

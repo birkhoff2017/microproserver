@@ -50,6 +50,7 @@ public interface ShopMapper {
             "FROM ycb_mcs_shop_station ss," +
             "ycb_mcs_shop s WHERE ss.shopid=s.id AND ss.station_id=#{sid}")
     Shop getShopInfoBySid(String sid);
+
     //获取押金金额
     @Select("SELECT s.defaultPay " +
             "FROM ycb_mcs_shop_station ss," +

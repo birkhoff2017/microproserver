@@ -62,13 +62,13 @@ public class RefundUtil {
             keyStore.load(inputStream, P12_PASSWORD.toCharArray());
         } catch (IOException e) {
             e.printStackTrace();
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
         } catch (CertificateException e) {
             e.printStackTrace();
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
         } finally {
             inputStream.close();
         }
@@ -84,7 +84,7 @@ public class RefundUtil {
             HttpResponse response = httpclient.execute(httpost);
             String jsonStr = EntityUtils.toString(response.getEntity(), "UTF-8");
             if (jsonStr.indexOf("FAIL") >= 0) {
-                logger.error("提现请求失败:"+jsonStr);
+                logger.error("提现请求失败:" + jsonStr);
                 return null;
             }
             doXMLtoMap = XmlUtil.doXMLParse(jsonStr);

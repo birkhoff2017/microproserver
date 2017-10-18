@@ -13,7 +13,7 @@ public class TimeUtil {
     public static String calLastTime(String returnTime, String borrowTime, Long duration) {
         Long diff = 0L;
         String lastTime = null;
-        if (StringUtils.isEmpty(borrowTime)){
+        if (StringUtils.isEmpty(borrowTime)) {
             return "";
         }
         if (StringUtils.isEmpty(returnTime)) {

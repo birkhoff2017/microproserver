@@ -34,7 +34,7 @@ public class MenuService {
     private String appSecret;
     // 回调地址
     @Value("${redirect_uri}")
-    private String redirect_uri ;
+    private String redirect_uri;
     // 请求地址
     @Value("${request_uri}")
     private String request_uri;
@@ -66,7 +66,7 @@ public class MenuService {
         CommonButton btn31 = new CommonButton();
         btn31.setName("云账户");
         btn31.setType(WechatMenuType.view.toString());
-        String url31 = request_uri+"?appid=" + appId + "&redirect_uri="+redirect_uri+"/user.html&response_type=code&scope=snsapi_base&state=1#wechat_redirect";
+        String url31 = request_uri + "?appid=" + appId + "&redirect_uri=" + redirect_uri + "/user.html&response_type=code&scope=snsapi_base&state=1#wechat_redirect";
         btn31.setUrl(url31);
 
         CommonButton btn32 = new CommonButton();
@@ -102,14 +102,14 @@ public class MenuService {
 
         ComplexButton mainBtn3 = new ComplexButton();
         mainBtn3.setName("用户中心");
-        mainBtn3.setSub_button(new CommonButton[] { btn31, btn32, btn33 });
+        mainBtn3.setSub_button(new CommonButton[]{btn31, btn32, btn33});
 
 
         /**
          * 封装整个菜单
          */
         Menu menu = new Menu();
-        menu.setButton(new Button[] { mainBtn1, mainBtn2, mainBtn3 });
+        menu.setButton(new Button[]{mainBtn1, mainBtn2, mainBtn3});
         return menu;
     }
 }

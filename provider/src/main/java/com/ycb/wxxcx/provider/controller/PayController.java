@@ -159,7 +159,7 @@ public class PayController {
                 this.messageMapper.insertPrepayIdMessage(message);
             }
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
             bacMap.put("data", null);
             bacMap.put("code", 0);
             bacMap.put("msg", "失败");

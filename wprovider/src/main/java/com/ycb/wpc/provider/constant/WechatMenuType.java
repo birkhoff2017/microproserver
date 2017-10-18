@@ -1,4 +1,5 @@
 package com.ycb.wpc.provider.constant;
+
 /**
  * 菜单类型<br>
  * 1、click：点击推事件用户点击click类型按钮后，微信服务器会通过消息接口推送消息类型为event的结构给开发者（参考消息接口指南），
@@ -24,19 +25,20 @@ package com.ycb.wpc.provider.constant;
  * ，微信客户端将打开开发者在按钮中填写的永久素材id对应的图文消息URL
  * ，永久素材类型只支持图文消息。请注意：永久素材id必须是在“素材管理/新增永久素材”接口上传后获得的合法id。
  * 11、miniprogram:个性化菜单创建时的类型，链接小程序，必须参数：url，appid（小程序的appid），pagepath（小程序的页面路径）
+ *
  * @author Bruce
  * @date 2017-10-7
  */
 public enum WechatMenuType {
-	click,
-	view,
-	scancode_push,
-	scancode_waitmsg,
-	pic_sysphoto,
-	pic_photo_or_album,
-	pic_weixin,
-	location_select,
-	media_id,
-	view_limited,
-	miniprogram
+    click,
+    view,
+    scancode_push,
+    scancode_waitmsg,
+    pic_sysphoto,
+    pic_photo_or_album,
+    pic_weixin,
+    location_select,
+    media_id,
+    view_limited,
+    miniprogram
 }

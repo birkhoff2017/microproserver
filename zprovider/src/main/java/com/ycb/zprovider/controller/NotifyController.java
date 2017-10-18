@@ -76,13 +76,13 @@ public class NotifyController {
 
         } catch (AlipayApiException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             //5. 响应结果加签及返回
             try {
                 //对响应内容加签
                 responseMsg = encryptAndSign(responseMsg,
                         alipayPublicKey,
-                        privateKey,charset,
+                        privateKey, charset,
                         false, true, signType);
 
                 //http 内容应答
@@ -92,7 +92,7 @@ public class NotifyController {
                 printWriter.print(responseMsg);
                 response.flushBuffer();
 
-            }catch (AlipayApiException alipayApiException) {
+            } catch (AlipayApiException alipayApiException) {
                 //开发者可以根据异常自行进行处理
                 alipayApiException.printStackTrace();
             }

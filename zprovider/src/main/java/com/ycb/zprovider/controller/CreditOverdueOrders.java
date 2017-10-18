@@ -98,7 +98,7 @@ public class CreditOverdueOrders {
             e.printStackTrace();
         }
         if (response == null || !response.isSuccess()) {
-            logger.error("订单号为：" + orderNo + "的逾期订单完结失败!"+ response.getBody());
+            logger.error("订单号为：" + orderNo + "的逾期订单完结失败!" + response.getBody());
             if (response != null) {
                 logger.error(response.getMsg());
             }

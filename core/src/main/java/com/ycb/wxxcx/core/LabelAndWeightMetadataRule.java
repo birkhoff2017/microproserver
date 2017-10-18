@@ -33,19 +33,19 @@ public class LabelAndWeightMetadataRule extends ZoneAvoidanceRule {
 
             // 优先匹配label
             String labelOr = metadata.get(META_DATA_KEY_LABEL_OR);
-            if(!StringUtils.isEmpty(labelOr)){
+            if (!StringUtils.isEmpty(labelOr)) {
                 List<String> metadataLabel = Arrays.asList(labelOr.split(CoreHeaderInterceptor.HEADER_LABEL_SPLIT));
                 for (String label : metadataLabel) {
-                    if(CoreHeaderInterceptor.label.get().contains(label)){
+                    if (CoreHeaderInterceptor.label.get().contains(label)) {
                         return server;
                     }
                 }
             }
 
             String labelAnd = metadata.get(META_DATA_KEY_LABEL_AND);
-            if(!StringUtils.isEmpty(labelAnd)){
+            if (!StringUtils.isEmpty(labelAnd)) {
                 List<String> metadataLabel = Arrays.asList(labelAnd.split(CoreHeaderInterceptor.HEADER_LABEL_SPLIT));
-                if(CoreHeaderInterceptor.label.get().containsAll(metadataLabel)){
+                if (CoreHeaderInterceptor.label.get().containsAll(metadataLabel)) {
                     return server;
                 }
             }

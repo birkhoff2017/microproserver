@@ -6,7 +6,7 @@ import java.util.Date;
 /**
  * Created by zhuhui on 17-6-19.
  */
-public class Order extends BaseEntity{
+public class Order extends BaseEntity {
     // 订单编号
     private String orderid;
     // 订单状态
@@ -50,7 +50,7 @@ public class Order extends BaseEntity{
     //归还站点id
     private Long returnStationId;
 
-      // 租借地点
+    // 租借地点
 //    private Long locationId;
 //    // 租借时间
 //    private Date orderTime;
@@ -71,13 +71,21 @@ public class Order extends BaseEntity{
     //资金流水号，用于商户与支付宝进行对账
     private String alipayFundOrderNo;
 
-    public String getOrderNo(){ return orderNo; }
+    public String getOrderNo() {
+        return orderNo;
+    }
 
-    public void setOrderNo(String orderNo){ this.orderNo = orderNo; }
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
+    }
 
-    public String getAlipayFundOrderNo(){ return alipayFundOrderNo; }
+    public String getAlipayFundOrderNo() {
+        return alipayFundOrderNo;
+    }
 
-    public void setAlipayFundOrderNo(String alipayFundOrderNo){ this.alipayFundOrderNo = alipayFundOrderNo; }
+    public void setAlipayFundOrderNo(String alipayFundOrderNo) {
+        this.alipayFundOrderNo = alipayFundOrderNo;
+    }
 
     public String getOrderid() {
         return orderid;

@@ -25,16 +25,16 @@ import java.util.Map;
 
 
 /**
-* 类名: WeixinUtil </br>
-* 包名： com.ycb.wpc.provider.menu.util
-* 描述: 公众平台通用接口工具类 </br>
-* 开发人员： Bruce  </br>
-* 创建时间：  2017-10-7 </br>
+ * 类名: WeixinUtil </br>
+ * 包名： com.ycb.wpc.provider.menu.util
+ * 描述: 公众平台通用接口工具类 </br>
+ * 开发人员： Bruce  </br>
+ * 创建时间：  2017-10-7 </br>
  */
 public class WeixinUtil {
-    
+
     private static Logger logger = LoggerFactory.getLogger(WeixinUtil.class);
-    
+
     // 菜单创建（POST） 限100（次/天）
     public static String menuCreateUrl = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=ACCESS_TOKEN";
 
@@ -43,8 +43,8 @@ public class WeixinUtil {
 
     /**
      * 创建菜单
-     * 
-     * @param menu 菜单实例
+     *
+     * @param menu        菜单实例
      * @param accessToken 有效的access_token
      * @return 0表示成功，其他值表示失败
      */
@@ -65,15 +65,14 @@ public class WeixinUtil {
 
         return result;
     }
-    
-    
 
-    
+
     /**
      * 描述:  发起https请求并获取结果
-     * @param requestUrl 请求地址
+     *
+     * @param requestUrl    请求地址
      * @param requestMethod 请求方式（GET、POST）
-     * @param outputStr 提交的数据
+     * @param outputStr     提交的数据
      * @return JSONObject(通过JSONObject.get(key)的方式获取json对象的属性值)
      */
     public static JSONObject httpRequest(String requestUrl, String requestMethod, String outputStr) {
@@ -81,7 +80,7 @@ public class WeixinUtil {
         StringBuffer buffer = new StringBuffer();
         try {
             // 创建SSLContext对象，并使用我们指定的信任管理器初始化
-            TrustManager[] tm = { new MyX509TrustManager() };
+            TrustManager[] tm = {new MyX509TrustManager()};
             SSLContext sslContext = SSLContext.getInstance("SSL", "SunJSSE");
             sslContext.init(null, tm, new java.security.SecureRandom());
             // 从上述SSLContext对象中得到SSLSocketFactory对象
@@ -94,7 +93,7 @@ public class WeixinUtil {
             httpUrlConn.setDoOutput(true);
             httpUrlConn.setDoInput(true);
             httpUrlConn.setUseCaches(false);
-            
+
             // 设置请求方式（GET/POST）
             httpUrlConn.setRequestMethod(requestMethod);
 
@@ -132,25 +131,26 @@ public class WeixinUtil {
         }
         return jsonObject;
     }
+
     private static final String token = "yunchongba";
 
-    public static boolean validate(String signature, String timestamp, String nonce){
-        String[] tmpArr={token,timestamp,nonce};
+    public static boolean validate(String signature, String timestamp, String nonce) {
+        String[] tmpArr = {token, timestamp, nonce};
         Arrays.sort(tmpArr);
-        String tmpStr=ArrayToString(tmpArr);
-        tmpStr=SHA1Encode(tmpStr);
-        if(tmpStr.equalsIgnoreCase(signature)){
+        String tmpStr = ArrayToString(tmpArr);
+        tmpStr = SHA1Encode(tmpStr);
+        if (tmpStr.equalsIgnoreCase(signature)) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
 
     //数组转字符串
-    public static String ArrayToString(String [] arr){
+    public static String ArrayToString(String[] arr) {
         StringBuffer bf = new StringBuffer();
-        for(int i = 0; i < arr.length; i++){
+        for (int i = 0; i < arr.length; i++) {
             bf.append(arr[i]);
         }
         return bf.toString();
@@ -181,23 +181,24 @@ public class WeixinUtil {
 
     /**
      * <p>传值</p>
+     *
      * @param request 当前post值
-     * return String
+     *                return String
      */
-    public static String getStringPostWeixin(HttpServletRequest request){
+    public static String getStringPostWeixin(HttpServletRequest request) {
         StringBuilder buffer = new StringBuilder();
-        BufferedReader reader=null;
-        try{
-            reader = new BufferedReader(new InputStreamReader(request.getInputStream(),"UTF-8"));
-            String line=null;
-            while((line = reader.readLine())!=null){
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new InputStreamReader(request.getInputStream(), "UTF-8"));
+            String line = null;
+            while ((line = reader.readLine()) != null) {
                 buffer.append(line);
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             logger.error("request -> InputStream 异常");
-        }finally{
-            if(null!=reader){
+        } finally {
+            if (null != reader) {
                 try {
                     reader.close();
                 } catch (IOException e) {
@@ -210,24 +211,22 @@ public class WeixinUtil {
     }
 
 
-
-
-
     /**
      * <p>传入数据转为document</p>
+     *
      * @param domStr 数据字符串
-     * reuturn document
+     *               reuturn document
      */
-    public static Document automatismRestoreDocument(String domStr){
-        Document document=null;
-        if(null != domStr && !domStr.isEmpty()){
-            try{
-                logger.info("微信---传入数据str"+domStr);
+    public static Document automatismRestoreDocument(String domStr) {
+        Document document = null;
+        if (null != domStr && !domStr.isEmpty()) {
+            try {
+                logger.info("微信---传入数据str" + domStr);
                 document = DocumentHelper.parseText(domStr);
-            }catch(Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-            if(null==document){
+            if (null == document) {
                 logger.error("微信---传入数据有误");
                 return null;
             }
@@ -237,10 +236,11 @@ public class WeixinUtil {
 
     /**
      * <p>自动回复</p>
+     *
      * @throws Throwable
      */
 
-    public static String automatismRestoreEntity(Map<String, Object> requestMap) throws Throwable{
+    public static String automatismRestoreEntity(Map<String, Object> requestMap) throws Throwable {
         String resultStr = "";
         // 发送方帐号（open_id）
         String fromUsername = (String) requestMap.get("FromUserName");
@@ -260,42 +260,50 @@ public class WeixinUtil {
         //请求的事件类型
         String event = (String) requestMap.get("Event");
 
-        String textTpl = "<xml>"+
-                "<ToUserName><![CDATA[%1$s]]></ToUserName>"+
-                "<FromUserName><![CDATA[%2$s]]></FromUserName>"+
-                "<CreateTime>%3$s</CreateTime>"+
-                "<MsgType><![CDATA[%4$s]]></MsgType>"+
-                "<Content><![CDATA[%5$s]]></Content>"+
+        String textTpl = "<xml>" +
+                "<ToUserName><![CDATA[%1$s]]></ToUserName>" +
+                "<FromUserName><![CDATA[%2$s]]></FromUserName>" +
+                "<CreateTime>%3$s</CreateTime>" +
+                "<MsgType><![CDATA[%4$s]]></MsgType>" +
+                "<Content><![CDATA[%5$s]]></Content>" +
                 "</xml>";
-        String contentStr  = "";
-        switch(returnTypeNumber(msgType)){
-            case 1 :
-                if(null!=content&&!content.equals(""))
-                {
-                    switch (content){
-                        case "1":contentStr = MessageReply.REPLY_ONE;
+        String contentStr = "";
+        switch (returnTypeNumber(msgType)) {
+            case 1:
+                if (null != content && !content.equals("")) {
+                    switch (content) {
+                        case "1":
+                            contentStr = MessageReply.REPLY_ONE;
                             break;
-                        case "2":contentStr = MessageReply.REPLY_TWO;
+                        case "2":
+                            contentStr = MessageReply.REPLY_TWO;
                             break;
-                        case "3":contentStr = MessageReply.REPLY_THREE;
+                        case "3":
+                            contentStr = MessageReply.REPLY_THREE;
                             break;
-                        case "4":contentStr = MessageReply.REPLY_FOUR;
+                        case "4":
+                            contentStr = MessageReply.REPLY_FOUR;
                             break;
-                        case "5":contentStr = MessageReply.REPLY_FIVE;
+                        case "5":
+                            contentStr = MessageReply.REPLY_FIVE;
                             break;
-                        case "6":contentStr = MessageReply.REPLY_SIX;
+                        case "6":
+                            contentStr = MessageReply.REPLY_SIX;
                             break;
-                        case "7":contentStr = MessageReply.REPLY_SEVEN;
+                        case "7":
+                            contentStr = MessageReply.REPLY_SEVEN;
                             break;
-                        case "8":contentStr = MessageReply.REPLY_EIGHT;
+                        case "8":
+                            contentStr = MessageReply.REPLY_EIGHT;
                             break;
-                        default:contentStr = MessageReply.REPLY_OTHERS;
+                        default:
+                            contentStr = MessageReply.REPLY_OTHERS;
                             break;
                     }
                 }
                 break;
-            case 2 :
-                if(null != event && event.equals("subscribe")){
+            case 2:
+                if (null != event && event.equals("subscribe")) {
                     contentStr = MessageReply.FOLLOW;
                 }
                 break;
@@ -306,16 +314,17 @@ public class WeixinUtil {
 
     /**
      * <p>1、text 2、event</p>
+     *
      * @param type
      * @return
      */
 
-    public static int returnTypeNumber(String type){
+    public static int returnTypeNumber(String type) {
         int i = 0;
-        if(null != type && !type.isEmpty()){
-            if(type.equals("text")){
+        if (null != type && !type.isEmpty()) {
+            if (type.equals("text")) {
                 i = 1;
-            }else if(type.equals("event")){
+            } else if (type.equals("event")) {
                 i = 2;
             }
         }

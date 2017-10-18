@@ -1,64 +1,66 @@
 * {
-	margin: 0;
-	padding: 0;
+    margin: 0;
+    padding: 0;
 }
 
 html {
-	width: 100%;
-	height: 100%;
-	font-size: 62.5%;
-	color: #222;
+    width: 100%;
+    height: 100%;
+    font-size: 62.5%;
+    color: #222;
 }
 
 body {
-	background-color: gainsboro;
+    background-color: gainsboro;
 }
 
 .log-list {
-	margin-top: 1rem;
-	background-color:#fff;
-	margin-bottom:1rem;
+    margin-top: 1rem;
+    background-color: #fff;
+    margin-bottom: 1rem;
 }
 
 .log-list .ordering {
-	width: 100%;
-	height: 3.9rem;
-	background-color: #fff;
-	border-bottom: 0.3rem solid #d3d3d3;
-	line-height: 3.9rem;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: space-between;
+    width: 100%;
+    height: 3.9rem;
+    background-color: #fff;
+    border-bottom: 0.3rem solid #d3d3d3;
+    line-height: 3.9rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .txtLeft {
-	padding-left: 1.5rem;
-	font-size: 1.4rem;
+    padding-left: 1.5rem;
+    font-size: 1.4rem;
 }
 
 .txtRight {
-	padding-right: 1.5rem;
+    padding-right: 1.5rem;
 }
 
 .ckme {
-	width: 100%;
-	height: 3rem;
-	background-color: green;
-	text-align: center;
-	line-height: 3rem;
-	font-size:1.6rem;
+    width: 100%;
+    height: 3rem;
+    background-color: green;
+    text-align: center;
+    line-height: 3rem;
+    font-size: 1.6rem;
 }
 
 .ckme .meWallet01 {
-	color: #fff;
+    color: #fff;
 }
+
 .state {
-	width:90%;
-	padding-left: 1.5rem;
-	margin-top:1rem;
-	font-size:1.4rem;
+    width: 90%;
+    padding-left: 1.5rem;
+    margin-top: 1rem;
+    font-size: 1.4rem;
 }
+
 .state .state-content {
-	margin-bottom:0.5rem;
+    margin-bottom: 0.5rem;
 }

@@ -147,7 +147,7 @@ public class CreditCreateOrderController {
         try {
             response = alipayClient.pageExecute(request, "GET"); // 这里一定要用GET模式
         } catch (AlipayApiException e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
         }
         //返回的map
         Map<String, String> returnMap = new LinkedHashMap<>();

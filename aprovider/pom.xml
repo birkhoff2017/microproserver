@@ -67,9 +67,9 @@
             <version>5.1.21</version>
         </dependency>
         <!--<dependency>-->
-            <!--<groupId>com.yunpian.sdk</groupId>-->
-            <!--<artifactId>yunpian-java-sdk</artifactId>-->
-            <!--<version>1.2.5</version>-->
+        <!--<groupId>com.yunpian.sdk</groupId>-->
+        <!--<artifactId>yunpian-java-sdk</artifactId>-->
+        <!--<version>1.2.5</version>-->
         <!--</dependency>-->
     </dependencies>
 
