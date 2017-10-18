@@ -143,9 +143,9 @@ public class RefundController {
                 this.refundMapper.insertRefund(refund);//写入退款记录表
 
                 //更新用户待退款金额
-                user.setRefund(refundMoney);
-                user.setLastModifiedBy("SYS:refund");
-                this.userMapper.updateUserRefund(user);
+//                user.setRefund(refundMoney);
+//                user.setLastModifiedBy("SYS:refund");
+//                this.userMapper.updateUserRefund(user);
 
                 newRefund = this.refundMapper.findRefundIdByUid(user.getId());//拿退款编号
 
