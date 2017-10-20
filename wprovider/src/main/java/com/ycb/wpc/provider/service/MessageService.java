@@ -31,6 +31,8 @@ public class MessageService {
 
     public static final Logger logger = LoggerFactory.getLogger(MessageService.class);
 
+    public static final String WPC_ACCESS_TOKEN = "WPC_ACCESS_TOKEN";
+
     @Autowired(required = false)
     private MessageMapper messageMapper;
 
@@ -62,12 +64,12 @@ public class MessageService {
     public String getAccessToken(String appID, String appSecret) {
         String param = "grant_type=client_credential&appid=" + appID + "&secret=" + appSecret;
         try {
-            String accessToken = redisService.getKeyValue(MD5.getMessageDigest(appID.getBytes()));
+            String accessToken = redisService.getKeyValue(WPC_ACCESS_TOKEN);
             if (org.apache.commons.lang.StringUtils.isBlank(accessToken)) {
                 String tokenInfo = HttpRequest.sendGet(GlobalConfig.WX_ACCESS_TOKEN_URL, param);
                 Map<String, Object> tokenInfoMap = JsonUtils.readValue(tokenInfo);
                 accessToken = tokenInfoMap.get("access_token").toString();
-                redisService.setKeyValueTimeout(MD5.getMessageDigest(appID.getBytes()), accessToken, Long.valueOf("7200"));
+                redisService.setKeyValueTimeout(WPC_ACCESS_TOKEN, accessToken, Long.valueOf("7200"));
             }
             return accessToken;
         } catch (Exception e) {
