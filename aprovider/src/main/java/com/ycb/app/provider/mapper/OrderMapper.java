@@ -47,7 +47,7 @@ public interface OrderMapper {
             @Result(property = "usefee", column = "usefee"),
             @Result(property = "paid", column = "paid"),
             @Result(property = "duration", column = "duration"),
-            @Result(property = "feeStrategyEntity", column = "fee_settings", one = @One(select = "com.ycb.wxxcx.provider.mapper.FeeStrategyMapper.findFeeStrategy"))
+            @Result(property = "feeStrategyEntity", column = "fee_settings", one = @One(select = "com.ycb.app.provider.mapper.FeeStrategyMapper.findFeeStrategy"))
     })
     List<TradeLog> findTradeLogs(Long customer);
 
@@ -115,7 +115,7 @@ public interface OrderMapper {
             @Result(property = "usefee", column = "usefee"),
             @Result(property = "paid", column = "paid"),
             @Result(property = "duration", column = "duration"),
-            @Result(property = "feeStrategyEntity", column = "fee_settings", one = @One(select = "com.ycb.wxxcx.provider.mapper.FeeStrategyMapper.findFeeStrategy"))
+            @Result(property = "feeStrategyEntity", column = "fee_settings", one = @One(select = "com.ycb.app.provider.mapper.FeeStrategyMapper.findFeeStrategy"))
     })
     TradeLog findOrderByOrderId(@Param("orderid") String orderid);
 }

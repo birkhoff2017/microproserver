@@ -102,6 +102,7 @@ public class UserController {
                     // 如果不存在，则新建主账户，并创建授权表
                     User user = this.userMapper.findUserByMobile(mobile);
                     if (user == null) {
+                        user = new User();
                         user.setOpenid(mobile);
                         user.setDeposit(BigDecimal.ZERO);
                         user.setRefund(BigDecimal.ZERO);
