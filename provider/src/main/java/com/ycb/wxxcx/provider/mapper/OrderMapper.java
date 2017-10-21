@@ -127,4 +127,7 @@ public interface OrderMapper {
             @Result(property = "feeStrategyEntity", column = "fee_settings", one = @One(select = "com.ycb.wxxcx.provider.mapper.FeeStrategyMapper.findFeeStrategy"))
     })
     TradeLog findOrderByOrderId(@Param("orderid") String orderid);
+
+    @Select("SELECT t.borrow_battery_rfid from ycb_mcs_tradelog t WHERE orderid = #{orderid}")
+    String findBatteryRfidByOrderId(String orderid);
 }
