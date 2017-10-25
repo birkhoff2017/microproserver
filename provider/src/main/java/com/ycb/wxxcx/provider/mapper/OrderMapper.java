@@ -113,7 +113,8 @@ public interface OrderMapper {
     Integer findUserOrderNum(User user);
 
     //根据订单编号查询某条订单的具体信息
-    @Select("SELECT * from ycb_mcs_tradelog WHERE orderid = #{orderid}")
+    @Select("SELECT *, CASE WHEN return_time IS NULL THEN UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(borrow_time) " +
+            "WHEN return_time IS NOT NULL THEN UNIX_TIMESTAMP(return_time) - UNIX_TIMESTAMP(borrow_time) END duration from ycb_mcs_tradelog WHERE orderid = #{orderid}")
     @Results(value = {
             @Result(property = "orderid", column = "orderid"),
             @Result(property = "status", column = "status"),
